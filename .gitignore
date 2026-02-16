@@ -1,0 +1,6 @@
+# Log files
+firebase-debug.log
+.DS_Store
+
+# VSCode
+.vscode/

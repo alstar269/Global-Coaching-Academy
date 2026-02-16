@@ -1,46 +1,87 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>시각장애인을 위한 AI 교육 커리큘럼</title>
+  <title>시각장애인을 위한 AI 경제활동 가이드</title>
   <link href='/style.css' rel='stylesheet'>
 </head>
 <body>
-  <header>
-    <h1>시각장애인을 위한 AI 교육 커리큘럼</h1>
+  <a href="#main-content" class="skip-link">주요 콘텐츠로 바로가기</a>
+
+  <header class="site-header">
+    <div class="logo">AI-Powered Futures</div>
+    <nav class="main-nav" aria-label="주요 내비게이션">
+      <ul>
+        <li><a href="#intro">AI 소개</a></li>
+        <li><a href="#jobs">AI 관련 직업</a></li>
+        <li><a href="#resources">학습 자료</a></li>
+        <li><a href="#stories">성공 사례</a></li>
+      </ul>
+    </nav>
   </header>
-  <main>
-    <section>
-      <h2>1. AI 기초</h2>
-      <ul>
-        <li>AI란 무엇인가?</li>
-        <li>AI의 역사와 발전 과정</li>
-        <li>우리 주변의 AI 기술</li>
-        <li>AI 윤리</li>
-      </ul>
+
+  <main id="main-content">
+    <section id="hero">
+      <h1>AI, 새로운 가능성의 문을 열다</h1>
+      <p>시각장애인을 위한 AI 활용 경제활동 가이드에 오신 것을 환영합니다.</p>
     </section>
-    <section>
-      <h2>2. AI 기술 활용</h2>
-      <ul>
-        <li>음성인식 비서 활용하기 (Siri, Bixby, Google Assistant)</li>
-        <li>이미지 묘사 기능 활용하기 (Seeing AI, Envision AI)</li>
-        <li>문서 및 텍스트 인식 (OCR)</li>
-        <li>AI 기반 길 찾기 및 내비게이션</li>
-      </ul>
+
+    <section id="intro" aria-labelledby="intro-title">
+      <h2 id="intro-title">1. AI, 무엇이 다른가요?</h2>
+      <p>인공지능(AI)은 시각 정보를 음성으로 변환하거나, 반복적인 업무를 자동화하여 시각장애인이 더 넓은 분야에서 활동할 수 있도록 돕는 강력한 도구입니다.</p>
     </section>
-    <section>
-      <h2>3. AI와 직업</h2>
-      <ul>
-        <li>AI 시대의 유망 직업</li>
-        <li>AI를 활용한 업무 자동화</li>
-        <li>AI 관련 직업 탐색 및 준비</li>
-      </ul>
+
+    <section id="jobs" aria-labelledby="jobs-title">
+      <h2 id="jobs-title">2. AI와 함께하는 새로운 직업</h2>
+      <p>AI 기술을 활용하여 참여할 수 있는 다양한 직업들을 소개합니다.</p>
+      <resource-card 
+        title="데이터 라벨링 전문가"
+        description="AI 모델이 세상을 이해할 수 있도록 이미지, 텍스트, 음성 데이터에 정보를 태그하는 중요한 역할을 합니다. 재택 근무가 가능하고 유연한 근무 시간을 가질 수 있습니다."
+        link-text="관련 정보 더 알아보기"
+        link="#">
+      </resource-card>
+      <resource-card 
+        title="접근성 컨설턴트"
+        description="AI 기술과 제품이 시각장애인 사용자를 포함한 모두에게 동등한 경험을 제공하는지 테스트하고 개선 방안을 제시합니다. 사용자의 입장에서 귀중한 피드백을 제공할 수 있습니다."
+        link-text="관련 정보 더 알아보기"
+        link="#">
+      </resource-card>
+    </section>
+
+    <section id="resources" aria-labelledby="resources-title">
+      <h2 id="resources-title">3. 유용한 학습 자료</h2>
+      <p>AI 기술을 배우고 역량을 키울 수 있는 온라인 강의 및 커뮤니티를 안내합니다.</p>
+      <resource-card 
+        title="Codecademy: Learn AI"
+        description="인공지능의 기초부터 머신러닝 모델 구축까지 배울 수 있는 인터랙티브한 온라인 코스를 제공합니다. (영문)"
+        link-text="웹사이트 방문하기"
+        link="https://www.codecademy.com/learn/learn-ai">
+      </resource-card>
+      <resource-card 
+        title="Google AI for Anyone"
+        description="Google에서 제공하는 AI 및 머신러닝 관련 무료 학습 자료입니다. 비전문가도 쉽게 이해할 수 있는 콘텐츠가 많습니다. (영문)"
+        link-text="웹사이트 방문하기"
+        link="https://ai.google/education/">
+      </resource-card>
+    </section>
+
+    <section id="stories" aria-labelledby="stories-title">
+      <h2 id="stories-title">4. 성공 사례 둘러보기</h2>
+      <p>AI를 활용하여 자신의 분야에서 전문가로 활동하는 시각장애인들의 이야기를 만나보세요.</p>
+      <resource-card
+        title="사례: AI 개발자가 된 김민준님"
+        description="음성 인식 기술에 매료되어 프로그래밍을 배우기 시작했고, 현재는 AI 챗봇을 개발하는 회사에서 핵심적인 역할을 수행하고 있습니다."
+        link-text="스토리 읽어보기"
+        link="#">
+      </resource-card>
     </section>
   </main>
-  <footer>
-    <p>&copy; 2026 AI 교육. All rights reserved.</p>
+
+  <footer class="site-footer">
+    <p>&copy; 2026 AI-Powered Futures. All rights reserved.</p>
   </footer>
-  <script defer type="text/javascript" src="/main.js"></script>
+
+  <script defer type="module" src="/main.js"></script>
 </body>
 </html>
