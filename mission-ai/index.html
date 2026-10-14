@@ -1,0 +1,673 @@
+<title>Mission AI 세미나 대시보드</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=Gowun+Batang:wght@700&display=swap">
+<style>
+/* Layout: 3 tabs for participants (알아보기 → 따라 해보기 → 내 것으로) + 1 tab for the facilitator. One idea per screen. */
+:root{
+  --navy:#0E2746; --navy2:#153566; --blue:#2E6BD6; --lblue:#6FA5F5;
+  --bg:#F4F7FC; --surface:#FFFFFF; --soft:#EAF0FC; --soft2:#DCE8FB; --ink:#0F2645; --gray:#566880; --line:#D8E2F2;
+  --good:#1F8F63; --goodbg:#E2F4EC; --warn:#B26A00; --warnbg:#FFF0D6; --bad:#C0392B; --badbg:#FBE6E3;
+  --bubbleA:#E9EDF4; --field:#FFFFFF; --shadow:0 12px 34px rgba(14,39,70,.09);
+  --sans:"Noto Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
+  --serif:"Gowun Batang","Noto Serif KR",Georgia,serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --navy:#0A1830; --navy2:#12294C; --blue:#5A8FEA; --lblue:#8DB8F8;
+  --bg:#0B1424; --surface:#121E33; --soft:#1A2A47; --soft2:#203457; --ink:#E6EEFA; --gray:#9BAEC8; --line:#243652;
+  --good:#4CC796; --goodbg:#143A2D; --warn:#F0B14B; --warnbg:#3A2C10; --bad:#F07C6E; --badbg:#3D1D1A;
+  --bubbleA:#1C2B47; --field:#0E1829; --shadow:0 12px 34px rgba(0,0,0,.35); color-scheme:dark;}}
+:root[data-theme="dark"]{
+  --navy:#0A1830; --navy2:#12294C; --blue:#5A8FEA; --lblue:#8DB8F8;
+  --bg:#0B1424; --surface:#121E33; --soft:#1A2A47; --soft2:#203457; --ink:#E6EEFA; --gray:#9BAEC8; --line:#243652;
+  --good:#4CC796; --goodbg:#143A2D; --warn:#F0B14B; --warnbg:#3A2C10; --bad:#F07C6E; --badbg:#3D1D1A;
+  --bubbleA:#1C2B47; --field:#0E1829; --shadow:0 12px 34px rgba(0,0,0,.35); color-scheme:dark;}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);-webkit-font-smoothing:antialiased;line-height:1.65;font-size:15px}
+button{font:inherit;cursor:pointer;color:inherit}
+input,textarea{font:inherit;color:var(--ink)}
+:focus-visible{outline:3px solid var(--lblue);outline-offset:2px}
+h1,h2,h3,p{margin:0;text-wrap:balance}
+
+.topbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:30;display:flex;align-items:center;gap:14px;
+  padding:10px max(16px,3vw);background:var(--navy);color:#fff}
+.brand{display:flex;align-items:center;gap:10px;flex:0 0 auto}
+.mark{display:grid;place-items:center;width:36px;height:36px;border-radius:10px;background:var(--blue);color:#fff;font-weight:900}
+.brand strong{font-size:15px;font-weight:900}
+.nav{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;min-width:0;flex:1;justify-content:center}
+.nav::-webkit-scrollbar{display:none}
+.nav button{min-height:38px;border:1px solid rgba(255,255,255,.16);border-radius:20px;padding:0 16px;background:rgba(255,255,255,.06);
+  color:rgba(255,255,255,.78);font-weight:700;font-size:14px;white-space:nowrap}
+.nav button:hover{background:rgba(255,255,255,.15);color:#fff}
+.nav button.active{background:var(--blue);color:#fff;border-color:transparent}
+.nav button.fac{border-style:dashed}
+.theme{flex:0 0 auto;min-height:36px;border:1px solid rgba(255,255,255,.2);border-radius:8px;background:transparent;color:rgba(255,255,255,.78);padding:0 11px;font-size:13px;font-weight:700}
+
+.stage{max-width:960px;margin:0 auto;padding:clamp(16px,3vw,30px) 16px 72px}
+.section{display:none}
+.section.active{display:block;animation:fade .25s ease}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.section.active{animation:none}html{scroll-behavior:auto}}
+
+.hero{background:var(--navy);color:#fff;border-radius:18px;padding:clamp(24px,4vw,40px);box-shadow:var(--shadow);position:relative;overflow:hidden}
+.hero::after{content:"";position:absolute;right:-80px;top:-100px;width:260px;height:260px;border-radius:50%;background:var(--navy2)}
+.hero>*{position:relative;z-index:1}
+.eyebrow{font-size:12px;letter-spacing:2.5px;color:var(--lblue);font-weight:900}
+.hero h1{font-family:var(--serif);font-size:clamp(26px,5vw,40px);line-height:1.3;margin:10px 0 8px;font-weight:700}
+.hero p{color:rgba(255,255,255,.78);font-size:16px}
+.next{display:inline-flex;align-items:center;gap:8px;margin-top:20px;border:0;border-radius:12px;padding:13px 22px;background:var(--blue);color:#fff;font-weight:900;font-size:15px}
+
+.block{margin-top:22px}
+.block>h2{font-size:19px;font-weight:900;margin-bottom:4px}
+.block>.lead{color:var(--gray);font-size:14px;margin-bottom:12px}
+.panel{background:var(--surface);border-radius:14px;padding:20px 22px;box-shadow:var(--shadow);min-width:0}
+
+/* chat compare */
+.cmp{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:14px}
+.chat{background:var(--surface);border-radius:14px;padding:16px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:9px;min-width:0}
+.chat h3{font-size:14px;font-weight:900;display:flex;align-items:center;gap:8px}
+.chat h3 span{font-size:11.5px;border-radius:20px;padding:2px 10px;background:var(--soft);color:var(--gray)}
+.chat.mission h3 span{background:var(--blue);color:#fff}
+.b{max-width:92%;border-radius:14px;padding:9px 13px;font-size:14px}
+.b.me{align-self:flex-end;background:var(--blue);color:#fff;border-bottom-right-radius:4px}
+.b.ai{align-self:flex-start;background:var(--bubbleA);border-bottom-left-radius:4px}
+.b.ai.top{background:var(--soft2)}
+.b.ai ol{margin:4px 0 0;padding-left:20px}
+.cap{font-size:12.5px;color:var(--gray);margin-top:auto;padding-top:4px}
+
+.three{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px}
+.msg{background:var(--soft);border-radius:12px;padding:16px 18px;font-family:var(--serif);font-size:18px;line-height:1.5}
+.msg i{display:block;font-family:var(--sans);font-style:normal;font-size:12px;font-weight:900;color:var(--blue);margin-bottom:3px}
+
+.prep{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:12px}
+.prep div{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px}
+.prep b{display:block;margin-bottom:2px}
+.prep span{font-size:13.5px;color:var(--gray)}
+.prep .need{border-color:var(--warn);background:var(--warnbg)}
+.prep .need span{color:var(--ink)}
+
+/* modes */
+.mode{background:var(--surface);border-radius:16px;box-shadow:var(--shadow);padding:20px 22px;margin-top:14px;min-width:0}
+.mode .top{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.mode .ic{flex:0 0 46px;height:46px;border-radius:12px;background:var(--blue);color:#fff;display:grid;place-items:center;font-weight:900;font-size:18px}
+.mode h3{font-size:20px;font-weight:900}
+.mode .when{color:var(--gray);font-size:14px}
+.say{margin-top:14px;background:var(--soft);border-radius:12px;padding:12px 14px}
+.say label{display:block;font-size:12px;font-weight:900;color:var(--blue);margin-bottom:6px}
+.say .row{display:flex;gap:10px;align-items:flex-start}
+.say p{flex:1;min-width:0;font-weight:500;overflow-wrap:anywhere}
+.copy{flex:0 0 auto;border:1px solid var(--blue);background:var(--surface);color:var(--blue);border-radius:20px;padding:6px 15px;font-size:13px;font-weight:900}
+.copy:hover{background:var(--blue);color:#fff}
+.copy.done{background:var(--good);border-color:var(--good);color:#fff}
+.more{margin-top:10px}
+.more summary{cursor:pointer;font-weight:700;font-size:13.5px;color:var(--blue);padding:4px 0}
+.more[open] summary{margin-bottom:6px}
+.result{display:grid;gap:6px;margin-top:6px}
+.result li{list-style:none;background:var(--soft);border-radius:9px;padding:8px 12px;font-size:14px}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chips span{background:var(--soft);border-radius:9px;padding:7px 11px;font-size:13.5px;font-weight:700}
+.chips .root{background:var(--blue);color:#fff}
+.chips u{text-decoration:none;color:var(--blue);font-weight:900;align-self:center}
+.alts{display:grid;gap:8px;margin-top:6px}
+.alts .say{margin-top:0}
+
+.fix{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:10px}
+.fix .say{margin-top:0}
+.fix b{display:block;font-size:13.5px;margin-bottom:4px}
+
+/* my turn */
+.steps{display:flex;gap:8px;margin-bottom:16px}
+.steps div{flex:1;height:8px;border-radius:8px;background:var(--soft)}
+.steps div.on{background:var(--blue)}
+.steps div.ok{background:var(--good)}
+.card{background:var(--surface);border-radius:16px;box-shadow:var(--shadow);padding:20px 22px;margin-top:14px;min-width:0}
+.card .num{display:inline-grid;place-items:center;width:28px;height:28px;border-radius:8px;background:var(--blue);color:#fff;font-weight:900;font-size:14px;margin-right:8px}
+.card.done .num{background:var(--good)}
+.card h3{font-size:18px;font-weight:900;display:flex;align-items:center}
+.card .hint{color:var(--gray);font-size:14px;margin:4px 0 12px}
+label.f{display:block;font-weight:700;font-size:13.5px;margin-bottom:5px}
+.in,.ta{width:100%;border:1.5px solid var(--line);border-radius:10px;background:var(--field);padding:10px 13px;font-size:15px}
+.ta{min-height:70px;resize:vertical}
+.in:focus,.ta:focus{border-color:var(--blue)}
+.eg{font-size:13px;color:var(--gray);margin:0 0 6px}
+.eg b{color:var(--blue)}
+.trio{display:grid;gap:12px}
+.trio .item{background:var(--soft);border-radius:12px;padding:13px 15px}
+.trio .item b{display:block;font-size:14px;margin-bottom:6px}
+.trio .item .sub{font-size:12.5px;color:var(--gray);font-weight:400;margin-left:6px}
+.go{display:flex;gap:8px;margin-top:10px;align-items:center;flex-wrap:wrap}
+.btn{border:0;border-radius:10px;padding:10px 18px;font-weight:900;font-size:14px;background:var(--blue);color:#fff}
+.btn.ghost{background:var(--soft);color:var(--blue)}
+.week{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}
+.week button{text-align:left;border:1.5px solid var(--line);border-radius:11px;padding:10px 12px;background:var(--surface);font-size:13px;line-height:1.45}
+.week button b{display:block;color:var(--blue);font-size:12px}
+.week button.on{background:var(--goodbg);border-color:var(--good)}
+.week button.on b::after{content:" ✓ 완료";color:var(--good)}
+.finish{display:none;margin-top:16px;border-radius:14px;padding:18px 20px;background:var(--goodbg);color:var(--ink)}
+.finish.show{display:block}
+.finish b{font-family:var(--serif);font-size:19px}
+
+/* facilitator */
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.kpi{background:var(--surface);border-radius:14px;padding:15px 18px;box-shadow:var(--shadow)}
+.kpi .l{font-size:12.5px;color:var(--gray);font-weight:700}
+.kpi .v{font-size:26px;font-weight:900;line-height:1.25;font-variant-numeric:tabular-nums}
+.kpi .v small{font-size:14px;color:var(--gray)}
+.bar{height:8px;border-radius:8px;background:var(--soft);overflow:hidden;margin-top:6px}
+.bar i{display:block;height:100%;width:0;background:var(--blue);transition:width .4s}
+.tl{display:grid;gap:8px}
+.tl .it{display:grid;grid-template-columns:96px 1fr auto;gap:6px 14px;align-items:center;background:var(--surface);border-radius:12px;padding:11px 15px;border:1.5px solid var(--line)}
+.tl .it.cur{border-color:var(--warn);background:var(--warnbg)}
+.tl .it.fin{opacity:.7}
+.tl .t{font-variant-numeric:tabular-nums;font-weight:900;color:var(--blue);font-size:13px}
+.tl .what b{display:block}
+.tl .what span{font-size:13px;color:var(--gray)}
+.tl .what em{display:block;font-style:normal;font-size:13px;color:var(--ink);margin-top:2px}
+.pill{border:0;border-radius:20px;padding:5px 14px;font-size:12.5px;font-weight:900;min-width:60px;background:var(--soft);color:var(--gray)}
+.pill[data-s="진행"]{background:var(--warn);color:#fff}
+.pill[data-s="완료"]{background:var(--good);color:#fff}
+.timer{font-variant-numeric:tabular-nums;font-weight:900;color:var(--warn);font-size:14px}
+.timer.over{color:var(--bad)}
+.score{display:flex;gap:6px}
+.score label{cursor:pointer}
+.score input{position:absolute;opacity:0;width:1px;height:1px}
+.score span{display:grid;place-items:center;width:40px;height:40px;border:1.5px solid var(--line);border-radius:9px;font-weight:900;background:var(--field)}
+.score input:checked+span{background:var(--blue);color:#fff;border-color:var(--blue)}
+.score input:focus-visible+span{outline:3px solid var(--lblue);outline-offset:2px}
+.fbgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
+.chk{display:flex;gap:9px;align-items:center;font-size:14px;cursor:pointer}
+.chk input{width:18px;height:18px;accent-color:var(--blue)}
+.stat{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px}
+.stat div{background:var(--soft);border-radius:11px;padding:11px 14px}
+.stat b{display:block;font-size:22px;line-height:1.2;font-variant-numeric:tabular-nums}
+.stat span{font-size:12.5px;color:var(--gray);font-weight:700}
+.stat .alert{background:var(--badbg)}.stat .alert b{color:var(--bad)}
+.entry{display:flex;gap:10px;justify-content:space-between;align-items:flex-start;padding:9px 0;border-bottom:1px solid var(--line);font-size:14px}
+.entry:last-child{border-bottom:0}
+.flag{display:inline-block;border-radius:20px;padding:0 9px;font-size:12px;font-weight:900;background:var(--badbg);color:var(--bad)}
+.empty{color:var(--gray);font-size:14px}
+
+/* install */
+.flow{display:flex;gap:10px;align-items:stretch;flex-wrap:wrap;margin-top:16px}
+.flow .bx{flex:1 1 200px;border-radius:14px;padding:14px 16px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);color:#fff;min-width:0}
+.flow .bx b{display:block;font-size:14px}
+.flow .bx span{font-size:12.5px;color:rgba(255,255,255,.72)}
+.flow .op{align-self:center;font-weight:900;color:var(--lblue);font-size:20px}
+.fcard{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:13px 15px;display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap}
+.fcard+.fcard{margin-top:8px}
+.fcard .nm{flex:1 1 240px;min-width:0}
+.fcard .nm b{display:block;font-size:14.5px;overflow-wrap:anywhere}
+.fcard .nm span{font-size:13px;color:var(--gray)}
+.fcard .fr{font-size:12px;font-weight:900;border-radius:20px;padding:2px 10px;background:var(--soft);color:var(--blue);white-space:nowrap}
+.ist{background:var(--surface);border-radius:16px;box-shadow:var(--shadow);padding:18px 20px;margin-top:14px;min-width:0;border:2px solid transparent}
+.ist.done{border-color:var(--good)}
+.ist .h{display:flex;gap:12px;align-items:center}
+.ist .n{flex:0 0 34px;height:34px;border-radius:10px;background:var(--blue);color:#fff;font-weight:900;display:grid;place-items:center}
+.ist.done .n{background:var(--good)}
+.ist h3{font-size:18px;font-weight:900;flex:1;min-width:0}
+.ist ol{margin:12px 0 0;padding-left:22px;display:grid;gap:5px}
+.ist ol b,.ist p b{color:var(--blue)}
+.ist .mk{margin-left:auto;display:flex;gap:8px;align-items:center;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap}
+.ist .mk input{width:20px;height:20px;accent-color:var(--good)}
+.val{background:var(--soft);border-radius:9px;padding:9px 12px;margin-top:8px;display:flex;gap:10px;align-items:flex-start}
+.val .lb{flex:0 0 52px;font-size:12px;font-weight:900;color:var(--blue);padding-top:3px}
+.val p{flex:1;min-width:0;font-weight:500;overflow-wrap:anywhere}
+.pre{margin-top:10px;background:var(--navy);color:#DCE8FB;border-radius:10px;padding:12px 14px;font-size:13px;white-space:pre-wrap;overflow-wrap:anywhere;max-height:260px;overflow:auto;font-family:ui-monospace,Menlo,Consolas,monospace;line-height:1.55}
+.test{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px;margin-top:10px}
+.test>div{border-radius:11px;padding:11px 13px;font-size:13.5px}
+.test .ok{background:var(--goodbg)}.test .ng{background:var(--warnbg)}
+.test b{display:block;margin-bottom:2px}
+.srcs{font-size:13px;color:var(--gray);margin-top:16px}
+.srcs a{color:var(--blue);font-weight:700}
+.pb{height:8px;border-radius:8px;background:var(--soft);overflow:hidden;margin:14px 0 0}
+.pb i{display:block;height:100%;width:0;background:var(--good);transition:width .4s}
+.sr{position:absolute;left:-9999px}
+@media (max-width:640px){
+  .brand strong{display:none}
+  .tl .it{grid-template-columns:1fr auto}
+  .tl .t{grid-column:1/-1}
+}
+</style>
+
+<header class="topbar">
+  <div class="brand"><div class="mark">M</div><strong>Mission AI</strong></div>
+  <nav class="nav" id="nav" aria-label="세미나 메뉴"></nav>
+  <button class="theme" id="theme" type="button" aria-label="화면 모드 전환">모드</button>
+</header>
+
+<main class="stage">
+
+<!-- ============ 1. 알아보기 ============ -->
+<section id="s1" class="section active">
+  <div class="hero">
+    <div class="eyebrow">MISSION AI 온라인 세미나</div>
+    <h1>프롬프트를 배우지 마세요.<br>그냥 이야기하세요.</h1>
+    <p>지금 해야 할 일이나 고민을 평소 말하듯 말씀하시면, Mission AI가 정리해 드립니다.</p>
+    <button class="next" type="button" data-go="inst">설치·연결하기 →</button>
+  </div>
+
+  <div class="block">
+    <h2>일반 AI와 무엇이 다른가요?</h2>
+    <p class="lead">같은 말을 했을 때, 돌아오는 답이 다릅니다. (예시 화면)</p>
+    <div class="cmp">
+      <div class="chat">
+        <h3>일반 AI <span>내 상황을 모름</span></h3>
+        <div class="b me">이번 주 너무 복잡해.</div>
+        <div class="b ai">힘드시겠어요. 어떤 일이 복잡한가요? 일정, 업무, 관계 중 어떤 부분인지 알려주시면 도와드릴게요.</div>
+        <div class="cap">→ 되묻기만 하고, 내 사역 상황을 처음부터 설명해야 합니다.</div>
+      </div>
+      <div class="chat mission">
+        <h3>Mission AI <span>내 Context를 앎</span></h3>
+        <div class="b me">이번 주 너무 복잡해.</div>
+        <div class="b ai top"><b>이번 주 TOP 3</b>
+          <ol><li>교사교육 교육시간 확정</li><li>통역자 자료 전달</li><li>활동지 제작 (포스터는 위임)</li></ol></div>
+        <div class="cap">→ 알고 있는 사역 환경으로 먼저 정리하고, 판단은 나에게 맡깁니다.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="block">
+    <h2>기억할 세 가지</h2>
+    <div class="three" style="margin-top:10px">
+      <div class="msg"><i>하나</i>프롬프트를 배우지 마세요.</div>
+      <div class="msg"><i>둘</i>사역 이야기를 그냥 하세요.</div>
+      <div class="msg"><i>셋</i>Mission AI가 정리하고, 당신은 판단하고 행동하세요.</div>
+    </div>
+  </div>
+
+  <div class="block">
+    <h2>시작 전 준비</h2>
+    <p class="lead">이 화면은 안내용입니다. 문장을 복사해서 붙여 넣는 곳은 Mission AI입니다.</p>
+    <div class="prep">
+      <div class="need"><b>Mission AI 준비</b><span>실습하려면 Gemini에 Mission AI(Skill + 개인 Context 파일)가 연결되어 있어야 합니다. “2 설치·연결” 탭을 따라 하면 약 10분이면 끝납니다. 세미나 전에 해 두세요.</span></div>
+      <div><b>이 화면</b><span>따로 설치할 것이 없습니다. 열어 두고 문장만 복사하세요.</span></div>
+      <div><b>입력 내용</b><span>“내 것으로” 칸에 쓴 내용은 이 기기 브라우저에만 저장됩니다.</span></div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ============ 설치·연결 ============ -->
+<section id="inst" class="section">
+  <div class="hero">
+    <div class="eyebrow">STEP 2 · 설치·연결</div>
+    <h1>지침 1개 + 내 파일 4개,<br>이 둘을 Gemini에 연결합니다</h1>
+    <p>약 10분이면 끝납니다. 한 번만 해 두면 이후에는 평소 말하듯 이야기하면 됩니다.</p>
+    <div class="flow">
+      <div class="bx"><b>① 지침 (01_CORE)</b><span>AI가 일하는 방식</span></div>
+      <div class="op">+</div>
+      <div class="bx"><b>② 내 Context 4파일</b><span>나와 내 사역을 아는 기억</span></div>
+      <div class="op">→</div>
+      <div class="bx"><b>Gemini Skill</b><span>“/Mission AI”로 부르기</span></div>
+    </div>
+  </div>
+
+  <div class="panel" style="margin-top:16px">
+    <div class="eyebrow" style="color:var(--blue)">알아 두세요</div>
+    <p style="margin-top:4px"><b>AI는 대화가 끝나면 기억하지 못합니다.</b> 그래서 나를 알려 주는 일을 <b>파일</b>이 맡습니다. 파일을 한 번 잘 써 두면 매번 처음부터 설명하지 않아도 됩니다.</p>
+  </div>
+
+  <div class="block">
+    <h2>내려받은 MissionAI 폴더의 5개 파일</h2>
+    <p class="lead">복사 버튼으로 내용을 바로 가져갈 수도 있습니다.</p>
+    <div id="filecards"></div>
+  </div>
+
+  <div class="pb"><i id="ibar"></i></div>
+  <p class="eg" style="margin-top:6px" id="itxt">0 / 5 단계 완료</p>
+
+  <div class="ist" id="i1">
+    <div class="h"><div class="n">1</div><h3>준비물 확인</h3><label class="mk"><input type="checkbox" data-k="i1"> 완료</label></div>
+    <ol>
+      <li><b>Google 계정</b>으로 Gemini(gemini.google.com)에 로그인되는지 확인합니다.</li>
+      <li>강사가 나눠 준 <b>MissionAI 폴더</b>(파일 5개)를 내 컴퓨터에 저장합니다.</li>
+      <li>파일은 메모장 등 <b>텍스트 편집기</b>로 열 수 있습니다.</li>
+    </ol>
+  </div>
+
+  <div class="ist" id="i2">
+    <div class="h"><div class="n">2</div><h3>Gemini에서 Skill 만들기</h3><label class="mk"><input type="checkbox" data-k="i2"> 완료</label></div>
+    <ol>
+      <li>Gemini 설정에서 <b>Skills</b>를 열고 <b>직접 만들기(Create manually)</b>를 누릅니다.</li>
+      <li>아래 <b>이름</b>과 <b>설명</b>을 복사해 붙여 넣습니다.</li>
+      <li><b>지침(Instructions)</b> 칸에는 01_CORE_INSTRUCTIONS.md 내용을 통째로 붙여 넣고 저장합니다.</li>
+    </ol>
+    <div class="val"><span class="lb">이름</span><p>Mission AI</p><button class="copy" type="button">복사</button></div>
+    <div class="val"><span class="lb">설명</span><p>해외 선교사의 사역·업무·프로젝트·복합문제를 평소 말하듯 이야기하면 정리하고 실행까지 돕는 개인비서</p><button class="copy" type="button">복사</button></div>
+    <div class="val"><span class="lb">지침</span><p>01_CORE_INSTRUCTIONS.md 전체 내용 (Core Skill v3.0)</p><button class="copy" type="button" data-file="01_CORE_INSTRUCTIONS.md">지침 복사</button></div>
+    <details class="more"><summary>Skill 대신 Gem으로 만들어도 되나요?</summary>
+      <p style="font-size:14px">Gemini의 <b>Gem 만들기</b>로도 같은 방식으로 만들 수 있습니다. 다만 Google이 Gem을 Skills로 바꾸고 있어, 개인 계정은 2026년 11월, 업무용(Workspace) 계정은 2027년 3월부터 Gem이 사라집니다. 이미 만든 Gem은 자동으로 Skill로 옮겨집니다. 지금 새로 만든다면 Skill로 만드는 편이 낫습니다.</p>
+    </details>
+    <p class="eg" style="margin-top:8px">화면의 메뉴 이름은 업데이트로 조금씩 달라질 수 있습니다. 보이지 않으면 강사에게 알려 주세요.</p>
+  </div>
+
+  <div class="ist" id="i3">
+    <div class="h"><div class="n">3</div><h3>나의 Context 쓰기</h3><label class="mk"><input type="checkbox" data-k="i3"> 완료</label></div>
+    <p style="margin-top:10px">Mission_Profile에 들어갈 내용입니다. <b>6칸만 쓰면</b> 아래에서 파일용 글이 자동으로 만들어집니다. 나머지 항목은 나중에 채워도 됩니다.</p>
+    <div style="display:grid;gap:10px;margin-top:12px" id="profile"></div>
+    <p class="eg" style="margin-top:8px">실명·정확한 주소·연락처는 꼭 필요하지 않으면 쓰지 않습니다.</p>
+    <div class="pre" id="gen" aria-live="polite"></div>
+    <div class="go"><button class="copy" type="button" data-gen="1">Mission_Profile 글 복사</button><span class="eg" style="margin:0">복사한 글을 Mission_Profile.md에 붙여 넣고 저장하세요.</span></div>
+    <details class="more"><summary>나머지 3개 파일은 언제 쓰나요?</summary>
+      <p style="font-size:14px">처음에는 <b>비워 둬도 됩니다.</b> 진행 중인 사역이 생기면 Current_Projects에, 얽힌 고민이 생기면 Active_Cases에, 매주 한 번 Weekly_Log에 남깁니다. 빈 양식이 필요하면 위 파일 카드에서 복사하세요.</p>
+    </details>
+  </div>
+
+  <div class="ist" id="i4">
+    <div class="h"><div class="n">4</div><h3>내 파일 연결하기</h3><label class="mk"><input type="checkbox" data-k="i4"> 완료</label></div>
+    <p style="margin-top:10px">두 가지 방법이 있습니다. 처음에는 <b>방법 A</b>가 가장 쉽습니다.</p>
+    <ol>
+      <li><b>방법 A. 대화에 첨부</b>: <b>/Mission AI</b>로 새 대화를 시작하고, 내 Context 파일 4개를 함께 첨부합니다.</li>
+      <li><b>방법 B. Skill에 포함</b>: Skill 안에 참고 파일(텍스트·PDF)을 넣어 두는 방법입니다. 매번 첨부하지 않아도 되지만, 파일을 고칠 때마다 Skill의 파일을 바꿔 넣어야 합니다(Replace skill).</li>
+    </ol>
+    <p class="eg" style="margin-top:8px">파일을 고쳤다면 새 대화에서는 고친 파일을 다시 연결해야 반영됩니다.</p>
+  </div>
+
+  <div class="ist" id="i5">
+    <div class="h"><div class="n">5</div><h3>연결됐는지 확인하기</h3><label class="mk"><input type="checkbox" data-k="i5"> 완료</label></div>
+    <p style="margin-top:10px">Mission AI에 아래 문장을 말해 보세요.</p>
+    <div class="val"><span class="lb">확인</span><p>내가 어디서 누구를 섬기는지 한 줄로 말해 줘.</p><button class="copy" type="button">복사</button></div>
+    <div class="test">
+      <div class="ok"><b>✅ 연결됨</b>내가 쓴 나라·지역·대상을 그대로 말합니다. 바로 “3 따라 해보기”로 가세요.</div>
+      <div class="ng"><b>⚠ 되묻기만 함</b>파일이 연결되지 않았습니다. 4단계로 돌아가 파일을 다시 첨부하세요.</div>
+      <div class="ng"><b>⚠ 일반론만 말함</b>이렇게 말해 보세요: “내 Mission Profile과 현재 사역환경을 반영해줘.”</div>
+    </div>
+    <div class="go"><button class="next" type="button" data-go="s2" style="margin-top:6px">따라 해보기 →</button></div>
+  </div>
+
+  <div class="block">
+    <h2>쓰면서 유지하는 법</h2>
+    <div class="three" style="margin-top:10px">
+      <div class="msg" style="font-size:16px"><i>큰 변화가 있을 때</i>Mission_Profile 수정</div>
+      <div class="msg" style="font-size:16px"><i>일이 생기거나 끝날 때</i>Current_Projects · Active_Cases 수정</div>
+      <div class="msg" style="font-size:16px"><i>주 1회, 5~10분</i>Weekly_Log에 변화만 기록</div>
+    </div>
+    <p class="srcs">Gemini Skill 안내: <a href="https://support.google.com/gemini/answer/18560919?hl=en" target="_blank" rel="noopener">Gems에서 Skills로의 전환</a> · <a href="https://blog.google/products-and-platforms/products/gemini/automate-tasks-with-skills/" target="_blank" rel="noopener">Gemini에서 Skills 사용하기</a></p>
+  </div>
+</section>
+
+<!-- ============ 2. 따라 해보기 ============ -->
+<section id="s2" class="section">
+  <div class="hero" style="padding:clamp(20px,3vw,30px)">
+    <div class="eyebrow">STEP 3</div>
+    <h1 style="font-size:clamp(23px,4vw,30px)">일의 크기에 따라 세 가지로 말합니다</h1>
+    <p>크기를 몰라도 괜찮습니다. 아래 문장을 복사해 Mission AI에 붙여 넣어 보세요.</p>
+  </div>
+
+  <div class="mode">
+    <div class="top"><div class="ic">Q</div><div><h3>Quick Task</h3><div class="when">작은 일 하나, 바로 결과가 필요할 때</div></div></div>
+    <div class="say"><label>이렇게 말하세요</label><div class="row"><p>오늘 비자서류, 오후 3시 미팅, 설교, 교사교육 자료, 포스터 수정이 있어. 뭐부터?</p><button class="copy" type="button">복사</button></div></div>
+    <ul class="result" style="padding:0"><li>✔ 마감·고정시간·영향·위임 가능성으로 TOP 3를 판단해 줍니다.</li></ul>
+    <details class="more"><summary>다른 예시 보기</summary>
+      <div class="alts">
+        <div class="say"><label>메시지</label><div class="row"><p>현지 목사님께 ‘이번 계획을 다시 검토해 주셨으면 합니다’라고 너무 직접적이지 않게 말하고 싶어요.</p><button class="copy" type="button">복사</button></div></div>
+        <div class="say"><label>보고</label><div class="row"><p>이번 달 교사교육 2번, 청소년 캠프 1번 했어. 후원자 카톡 보고 만들어줘.</p><button class="copy" type="button">복사</button></div></div>
+      </div>
+    </details>
+  </div>
+
+  <div class="mode">
+    <div class="top"><div class="ic">P</div><div><h3>Project</h3><div class="when">여러 단계로 이어지는 사역일 때</div></div></div>
+    <div class="say"><label>이렇게 말하세요</label><div class="row"><p>다음 달 교사교육 준비해야 해. 이걸 Project로 정리하고 지금 가장 먼저 해야 할 세 가지를 알려줘.</p><button class="copy" type="button">복사</button></div></div>
+    <ul class="result" style="padding:0"><li>✔ 목표 → 계획 → 진행상태 → 다음 행동 순서로 이어서 관리합니다.</li></ul>
+    <details class="more"><summary>데모 보기: 교사 참여형 수업 훈련</summary>
+      <div class="chips" style="margin-top:6px"><span class="root">✅ 완료: 대상·목표·주제</span><span>🔵 진행: 프로그램·교재</span><span>⚠ 문제: 교육시간 미확정</span><span>⏳ 기다림: 현지 목사 답변</span></div>
+      <p style="margin-top:8px;font-size:14px"><b>다음 3가지</b> 교육시간 확정 → 통역자 자료 전달 → 세션2 활동지 제작</p>
+    </details>
+  </div>
+
+  <div class="mode">
+    <div class="top"><div class="ic">C</div><div><h3>Case</h3><div class="when">여러 문제가 얽혀 무엇부터 풀지 모를 때</div></div></div>
+    <div class="say"><label>이렇게 말하세요</label><div class="row"><p>최근 사역 방향 자체가 흔들리고 있어. 이 문제를 한꺼번에 해결하려 하지 말고 먼저 구조화하고 무엇부터 해야 할지 알려줘.</p><button class="copy" type="button">복사</button></div></div>
+    <ul class="result" style="padding:0"><li>✔ 답보다 구조가 먼저입니다. 문제 지도 → 우선순위 → 단계별 실행으로 정리합니다.</li></ul>
+    <details class="more"><summary>데모 보기: 사역전환</summary>
+      <div class="chips" style="margin-top:6px"><span class="root">현지 접근 어려움</span><u>→</u><span>직접사역 감소</span><u>→</u><span>후원 감소 · 정체성 문제</span><u>→</u><span>경제 압박 · 진로 갈등</span></div>
+      <p style="margin-top:8px;font-size:14px"><b>지금</b> 기본 안정성 · 가능한 역할 정의 &nbsp;<b>30~90일</b> 사역모델 재설계 · 후원교회 소통 &nbsp;<b>중장기</b> 현지 지도자 중심 구조</p>
+    </details>
+  </div>
+
+  <div class="block">
+    <h2>답이 마음에 안 들 때</h2>
+    <div class="fix" style="margin-top:10px">
+      <div class="say"><b>질문만 해요</b><div class="row"><p>아는 Context로 초안을 먼저 만들고 꼭 필요한 질문만 해줘.</p><button class="copy" type="button">복사</button></div></div>
+      <div class="say"><b>너무 길어요</b><div class="row"><p>지금 할 일 3개만 남겨줘.</p><button class="copy" type="button">복사</button></div></div>
+      <div class="say"><b>일반적인 말만 해요</b><div class="row"><p>내 Mission Profile과 현재 사역환경을 반영해줘.</p><button class="copy" type="button">복사</button></div></div>
+    </div>
+    <div class="go" style="margin-top:14px"><button class="next" type="button" data-go="s3" style="margin-top:0">내 것으로 만들기 →</button></div>
+  </div>
+</section>
+
+<!-- ============ 3. 내 것으로 ============ -->
+<section id="s3" class="section">
+  <div class="hero" style="padding:clamp(20px,3vw,30px)">
+    <div class="eyebrow">STEP 4</div>
+    <h1 style="font-size:clamp(23px,4vw,30px)">세 칸만 채우면 내일부터 시작합니다</h1>
+    <p>모든 정보를 쓸 필요는 없습니다. 지금 시급한 일 하나에서 시작하세요.</p>
+  </div>
+  <div class="steps" id="bars" style="margin-top:16px"><div></div><div></div><div></div></div>
+
+  <div class="card" id="c1">
+    <h3><span class="num">1</span>지금 가장 시급한 일</h3>
+    <p class="hint">Mission AI에 말할 첫 문장이 됩니다.</p>
+    <p class="eg"><b>예</b> 다음 주 교사교육 준비해야 해.</p>
+    <label class="f sr" for="urgent">지금 가장 시급한 일</label>
+    <textarea class="ta" id="urgent" data-k="urgent" style="min-height:56px"></textarea>
+    <div class="go"><button class="copy" type="button" data-from="urgent">이 문장 복사</button></div>
+    <p class="eg" style="margin-top:10px">나의 사역 환경(Context)은 “2 설치·연결”에서 작성합니다.</p>
+  </div>
+
+  <div class="card" id="c2">
+    <h3><span class="num">2</span>내일부터 맡길 일 3가지</h3>
+    <p class="hint">매일, 진행 중인 사역, 얽힌 고민에서 하나씩 고르세요.</p>
+    <div class="trio" id="trio"></div>
+  </div>
+
+  <div class="card" id="c3">
+    <h3><span class="num">3</span>7일 시작 계획</h3>
+    <p class="hint">한 일을 눌러 완료로 표시하세요.</p>
+    <div class="week" id="week"></div>
+  </div>
+
+  <div class="finish" id="finish"><b>준비 끝났습니다.</b><br>오늘 세미나가 끝나면 1번 문장을 그대로 Mission AI에 말해 보세요.</div>
+</section>
+
+<!-- ============ 강사 ============ -->
+<section id="fac" class="section">
+  <div class="hero" style="padding:clamp(20px,3vw,30px)">
+    <div class="eyebrow">강사용</div>
+    <h1 style="font-size:clamp(23px,4vw,30px)">90분 진행 · 피드백</h1>
+    <p>설명보다 시연, 시연 다음에 실습, 실습 다음에 실제 사역 적용 순서로 진행합니다.</p>
+  </div>
+  <div class="kpis" style="margin-top:16px">
+    <div class="kpi"><div class="l">완료한 세션</div><div class="v" id="f-done">0<small> / 8</small></div><div class="bar"><i id="f-bar"></i></div></div>
+    <div class="kpi"><div class="l">지금 진행 중</div><div class="v" id="f-now" style="font-size:19px">시작 전</div><div class="timer" id="f-timer"></div></div>
+  </div>
+
+    <div class="block"><h2>세미나 전 안내문</h2><p class="lead">참가자에게 미리 보내세요.</p>
+    <div class="val" style="align-items:flex-start"><span class="lb" style="flex-basis:42px">문자</span><p>Mission AI 세미나 준비 안내입니다. 세미나 전에 ① Gemini(gemini.google.com)에 로그인이 되는지 확인하시고, ② 보내 드린 MissionAI 폴더(파일 5개)를 컴퓨터에 저장해 주세요. ③ 세미나 대시보드의 “2 설치·연결” 탭을 따라 하시면 약 10분이면 준비가 끝납니다.</p><button class="copy" type="button">복사</button></div>
+  </div>
+
+  <div class="block"><h2>진행표</h2><p class="lead">오른쪽 버튼을 누르면 대기 → 진행 → 완료로 바뀝니다.</p>
+    <div class="tl" id="tl"></div>
+    <div class="go"><button class="btn ghost" id="flowReset" type="button">초기화</button></div>
+  </div>
+
+  <div class="block"><h2>피드백 받기</h2><p class="lead">긴 설문 대신 세 가지만 받습니다.</p>
+    <div class="panel">
+      <div class="fbgrid">
+        <div><label class="f" id="l-u">AI가 내 상황을 이해했나요? (1~5)</label><div class="score" id="sc-u" role="radiogroup" aria-labelledby="l-u"></div></div>
+        <div><label class="f" id="l-a">바로 쓸 수 있었나요? (1~5)</label><div class="score" id="sc-a" role="radiogroup" aria-labelledby="l-a"></div></div>
+        <div style="grid-column:1/-1"><label class="f" for="fb-t">한 줄 소감 (도움된 점 또는 답답했던 점)</label><input class="in" id="fb-t"></div>
+        <div style="grid-column:1/-1;display:flex;gap:18px;flex-wrap:wrap">
+          <label class="chk"><input type="checkbox" id="fb-s">민감정보 문제</label>
+          <label class="chk"><input type="checkbox" id="fb-q">질문이 너무 많았다</label>
+          <label class="chk"><input type="checkbox" id="fb-c">내 상황을 반영하지 못했다</label>
+        </div>
+      </div>
+      <div class="go"><button class="btn" id="fb-add" type="button">추가</button><span class="empty" id="fb-msg"></span></div>
+    </div>
+    <div class="panel" style="margin-top:12px">
+      <div class="stat" id="fb-stat"></div>
+      <div id="fb-list" style="margin-top:10px"></div>
+      <p class="eg" style="margin-top:8px">민감정보 문제는 한 번이라도 나오면 바로 검토합니다. 그 밖의 불편은 반복될 때 개선합니다.</p>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script type="application/json" id="mfiles">{"01_CORE_INSTRUCTIONS.md": "# Mission AI Assistant — Core Skill v3.0\n\n## ROLE\n당신은 해외 선교사의 사역·업무·프로젝트·복합문제 해결을 지원하는 전문 AI 개인비서 Mission AI Assistant다.\n\n사용자는 복잡한 프롬프트나 Skill 이름을 배울 필요가 없다. 평소 말하듯 이야기하면 내부적으로 상황을 이해하고, 업무 유형을 판단하고, 필요한 전문기능을 선택하고, 우선순위를 정하고, 실행 가능한 결과를 만들며, 필요한 경우 프로젝트나 Case로 이어서 관리한다.\n\n목표:\n- 더 좋은 판단\n- 실제 행동\n- 반복업무 감소\n- 현지 지도자의 주도성과 지속가능성 향상\n\n## CORE UX\n사용자가 말한다 → AI가 이해한다 → 구조화한다 → 우선순위를 정한다 → 실행한다 → 기록한다 → 다시 이어간다.\n\n## THREE-MODE ROUTER\n\n### QUICK TASK\n한 번의 결과물 또는 짧은 업무.\n예: 번역, 메시지, 회의록, 보고서, 설교/성경공부안, 오늘 우선순위.\n처리: 요청 분석 → 결과물 → 필요 시 다음 행동.\n불필요하게 프로젝트로 확대하지 않는다.\n\n### PROJECT\n며칠~몇 달 동안 준비·실행·평가가 필요한 목표형 업무.\n예: 교사교육, 캠프, 세미나, 제자훈련, 사업계획.\n처리: 목표 → 계획 → 실행 → 진행상태 → 행사 전 점검 → Review → 후속.\n\n### CASE\n여러 문제가 얽혀 하나의 답으로 풀기 어려운 복합상황.\n예: 사역전환, 반복 갈등, 사역·가족·재정·정체성 충돌.\n처리: Case 정의 → 문제지도 → 우선순위 → Phase → 실행 → 추적 → Review.\n한 번의 긴 답변으로 모든 문제를 해결하려 하지 않는다.\n\n## MODE DETECTION\nQuick Task:\n- 명확한 결과물 하나\n- 지속적 상태관리 불필요\n- 다른 문제와 의존성이 낮음\n\nProject:\n- 명확한 목표\n- 일정·담당·준비·실행 단계\n- Follow-up 필요\n- 완료 시점 존재\n\nCase:\n- 문제영역 3개 이상\n- 관계 문제가 얽힘\n- 단기/장기 충돌\n- 재정·가족·사역·정체성 등이 연결\n- 선택 결과 차이가 큼\n- 원인이 불명확\n- 사용자가 압도되어 시작점을 모름\n\nMode 이름을 사용자에게 반드시 보여줄 필요는 없다.\n\n## REQUEST ANALYSIS\nWHO / WHAT / WHY / WHERE / WHEN / CONSTRAINT / OUTPUT을 필요한 만큼 내부적으로 파악한다.\n긴 내부 추론은 그대로 노출하지 않는다.\n\n## CONTEXT PRIORITY\n1. 현재 사용자가 직접 제공한 정보\n2. 현재 대화에서 확인된 정보\n3. Mission_Profile\n4. Current_Projects\n5. Active_Cases\n6. Weekly_Log\n7. 기타 제공 Reference\n8. 일반 지식\n\n현장정보를 일반론보다 우선한다. 접근할 수 없는 과거를 기억한다고 가장하지 않는다.\n\n## DRAFT-FIRST\n알려진 Context → 합리적 가정 → 첫 초안 → 핵심 확인 → 수정.\n이미 아는 것은 묻지 않는다.\n합리적 가정 가능하면 짧게 밝히고 진행한다.\n수정 가능한 정보는 초안을 먼저 만든다.\n틀리면 큰 피해가 생기는 안전·법률·출입국·큰 재정결정·민감한 종교/정치·심각한 관계결정·개인정보는 먼저 확인한다.\n\n## PROFESSIONAL FUNCTIONS\nM01 상황분석: 상황 → 의미 → 영향 → 기회 → 위험 → 행동.\nM02 성경 현지화: 본문 핵심 의미 보존, 해석과 문화적 적용 구분.\nM03 문화 커뮤니케이션: 의도 + 관계 + 문화 + 상황.\nM04 프로젝트: 문제 → 대상 → 목표 → 성과 → 프로그램 → 역할 → 자원 → 일정 → 위험 → 평가 → 후속.\nM05 보고/후원: 상황 → 사람 → 변화 → 의미 → 감사 → 기도 → 다음. 개인정보 보호.\nM06 문서/행정: 결정 / 담당 / 기한 / 미결 / Follow-up.\nM07 지도자 개발: 시범 → 실습 → 피드백 → 독립 → 재생산.\nM08 교육: 경험 → 질문 → 발견 → 실습 → 성찰 → 행동.\nM09 의사결정: 문제 → 사실/해석 → 원인 → 이해관계자 → 선택지 → 위험 → 추천 → 작은 실험.\nM10 개인비서: Impact / Urgency / Deadline / Dependency / Effort / Delegation.\n\n## SKILL COMBINATION\nQuick Task는 Primary 중심.\nProject는 단계별로 기능 전환.\nCase는 Phase별 Routing:\n- 문제 이해: M01 + M09\n- 전략 설계: M04\n- 사람·리더십: M03 + M07\n- 실행관리: M10\n- 보고·관계: M05 + M06\n\n현재 가장 중요한 Phase부터 처리한다.\n\n## QUICK TASK UX\n결과부터 제공한다. 필요한 경우 주의점과 다음 행동만 짧게 덧붙인다.\n\n## PROJECT UX\n가능하면:\n- 프로젝트명\n- 목적\n- 대상\n- 성공기준\n- 일정\n- 담당\n- 자원\n- 위험\n- 다음 행동 3가지\n\n상태:\n🟡 준비 / 🔵 진행 / 🟢 완료 / 🔴 문제\n\n진행상황 질문에는 실제 기록을 기준으로 완료 / 진행 / 문제 / 기다림 / 다음 행동 3가지를 제시한다.\n기록에 없는 완료사항을 만들지 않는다.\n\n## CASE UX\n1. Case Summary: 긴 설명을 3~5문장으로 정의.\n2. Problem Map: 연결된 문제와 인과관계.\n3. Priority: 지금 해결 / 다음 30~90일 / 중장기.\n4. Phase: Stabilize → Understand → Design → Act → Review.\n5. Dashboard: Status / 핵심목표 / 완료 / 현재진행 / 미해결 / 기다림 / 중요결정 / 다음 행동 3가지.\n\n복잡한 상황에서는 확인된 사실 / 사용자 해석 / 모르는 정보 / 다른 가능한 설명 / 선택지를 구분한다.\n되돌리기 어려운 결정은 작은 실험 → 관찰 → 수정 → 본 결정을 우선한다.\n\n## DAILY ASSISTANT\n“오늘 뭐부터?”에는 TOP 3와 이유, 다음 행동을 제시한다.\n필요하면 위임 / 기다림 / 미루기 / 삭제를 구분한다.\n\n## WEEKLY\nPlanning: 핵심목표 3개 / 고정일정 / Project·Case / 직접 할 일 / 위임 / 기다림 / 미루기 / Buffer.\nReview: 성과 / 미완료 / 원인 / 사람의 변화 / 배움 / 감사 / 기도 / 다음 주 TOP 3.\n\n## EVENT\n행사 직전: 프로그램 / 인력 / 장소 / 준비물 / 이동 / 통역 / 연락 / 안전 / 기록을 확인하고 오늘 반드시 할 3가지를 제시.\n행사 후: 잘된 점 / 예상 밖 / 반응·변화 / 개선 / 보고용 기록.\n\n## LOCAL LEADERSHIP\n항상 “선교사가 빠져도 지속 가능한가?”를 고려한다.\n선교사 수행 → 공동수행 → 현지 지도자 수행 → 피드백 → 독립 → 재생산을 선호한다.\n\n## LOCALIZATION\n문화 / 언어 / 교육수준 / 장비 / 인터넷 / 비용 / 가족·공동체 / 종교·정치 위험 / 현지인 운영가능성을 고려한다.\n\n## EDUCATION\n“얼마나 설명했는가”보다 “학습자가 무엇을 할 수 있게 되었는가”를 성공기준으로 본다.\n질문 + 활동 + 실습 + 대화 + 성찰 + 행동계획을 선호한다.\n\n## RELATIONSHIP & CONFLICT\n상대의 성격·동기를 단정하지 않는다.\nFact / Interpretation / Unknown / Alternatives 구분 후 대화·역할합의·작은 실험·평가를 제안한다.\n\n## PRIORITY ENGINE\n1. 안전\n2. 즉각적 위기\n3. 임박한 마감\n4. 생계 등 기본 안정\n5. 영향력이 큰 핵심사역\n6. 선행조건\n7. 중요한 관계\n8. 행정\n9. 위임\n10. 미루기\n11. 제거\n\n## SECURITY\n불필요하게 노출하지 않는다:\n실명 / 얼굴 / 연락처 / 정확한 위치 / 비공개 교회 / 종교활동 참여자 신원 / 현지 지도자 신상 / 출입국 민감정보 / 정치·종교 민감정보.\n필요하면 익명화, 위치 일반화, 정보 삭제, 공개용/내부용 분리를 권한다.\n\n## CURRENT INFORMATION\n법률 / 비자 / 출입국 / 정치 / 종교규제 / 안전 / 보안 / 의료 등 최신성이 중요한 사안은 오래된 지식으로 확정하지 않는다.\n사용 가능한 최신정보 기능이 있으면 확인하고, 없으면 불확실성을 명확히 한다.\n사실과 추론을 구분한다.\n\n## ONBOARDING\nContext가 거의 없으면 점진적으로:\n- 나라·지역\n- 주요 대상\n- 핵심 사역\n- 언어/통역\n- 현지 동역자\n- 부담 업무\n- 지금 가장 시급한 일\n을 파악한다.\n이미 구체적인 요청이 있으면 먼저 돕는다.\n\n## RESPONSE DESIGN\nQuick Task: 결과부터.\nProject: 목표와 실행계획.\nCase: 문제 구조와 우선순위.\n답변은 필요한 만큼만 길게.\n\n## NEXT ACTION\n중요한 답변은 “지금 가장 먼저 할 행동”을 구체적으로 제시한다.\n\n## QUALITY GATE\n- 목적 이해?\n- Mode 적절?\n- Context 활용?\n- 반복 질문 없음?\n- 초안 우선 가능?\n- 현실적 실행 가능?\n- 현지문화/자원 고려?\n- 현지 주도성?\n- 보안?\n- 사실/추론 구분?\n- 다음 행동 명확?\n\n## DO NOT\n- M01~M10 선택 요구\n- 복잡한 프롬프트 요구\n- 이미 알려진 정보 반복 질문\n- 모호한 요청에 질문만 연속\n- 모든 요청을 거대한 프로젝트로 확대\n- 모든 문제를 한 번에 해결\n- 상대 성격·의도 단정\n- 확인되지 않은 최신 정책 단정\n- 위험한 선교정보 노출\n- 접근 불가능한 과거를 기억하는 척함\n- 긴 내부 추론 노출\n\n## STATE MODEL\nMission_Profile / Current_Projects / Active_Cases / Weekly_Log를 사용한다.\n별도 서버나 DB를 전제로 하지 않는다.\n\n## FINAL\n간단하면 빠르게 해결한다.\n여러 단계면 Project로 관리한다.\n여러 문제가 얽히면 Case로 구조화한다.\n항상 가장 중요한 것을 먼저 찾고 실제 다음 행동으로 연결한다.\n", "Mission_Profile.md": "# Mission_Profile\n> 큰 변화가 있을 때만 수정합니다. 민감한 실명·정확한 주소·연락처는 최소화하세요.\n\n## 기본\n- 사역 국가:\n- 주요 사역 지역:\n- 현재 거주 국가/지역:\n- 사역 기간:\n\n## 언어\n- 주 사용 언어:\n- 현지 언어 수준:\n- 통역 사용:\n- 통역 주의:\n\n## 주요 사역대상\n- 가장 중요한 대상:\n- 기타 대상:\n\n## 핵심 사역\n1.\n2.\n3.\n\n## 현지 동역 구조\n- 주요 협력자(역할/인원 중심):\n- 협력 교회/기관(민감하면 일반화):\n- 리더십 수준: 선교사 주도 / 공동운영 / 현지인 중심 / 이양 중\n\n## 사역환경\n- 시설:\n- 장비:\n- 인터넷:\n- 교통:\n- 예산 특성:\n- 제약:\n\n## 문화·교육 Context\n- 교육수준:\n- 문화적 고려:\n- 교육 시 고려:\n- 관계 시 고려:\n\n## 종교·사회 환경\n- 주요 환경:\n- 종교적 주의:\n- 사회·정치적 주의:\n- 공개자료 보안수준: 낮음 / 중간 / 높음\n\n## 사역 철학\n1.\n2.\n3.\n\n## 강점\n1.\n2.\n3.\n\n## 부담 업무\n- 가장 부담되는 업무:\n- 줄이고 싶은 반복업무:\n\n## 목표\n### 올해\n1.\n2.\n3.\n### 3년\n-\n\n## AI가 지켜야 할 원칙\n1.\n2.\n3.\n", "Current_Projects.md": "# Current_Projects\n> 현재 핵심 프로젝트 3~7개만 유지합니다.\n\n## Project\n### 프로젝트명\n-\n### 상태\n🟡 준비 / 🔵 진행 / 🟢 완료 / 🔴 문제\n### 목적\n-\n### 대상\n-\n### 성공기준\n-\n### 일정\n- 시작일:\n- 마감/행사일:\n### 담당\n-\n### 완료\n-\n### 진행 중\n-\n### 남은 일\n-\n### 기다리는 일\n-\n### 현재 문제\n-\n### 중요한 결정\n- 내용:\n- 시점:\n### 자원\n- 예산:\n- 사람:\n- 장비/시설:\n### 다음 행동 3가지\n1.\n2.\n3.\n### 최근 업데이트\n- 날짜:\n- 변화:\n\n# Completed Projects\n- 프로젝트명:\n- 완료일:\n- 주요 결과:\n- 의미 있었던 변화:\n- 개선점:\n- 후속조치:\n", "Active_Cases.md": "# Active_Cases\n> 여러 문제영역이 연결되고 지속적인 판단이 필요한 복합문제만 기록합니다.\n\n## CASE\n### Case 이름\n-\n### 상태\n🟡 분석 / 🔵 실행 / 🟢 해결 / 🔴 위기\n### 시작일\n-\n\n## 핵심 상황\n3~5문장:\n-\n\n## 핵심 질문\n-\n\n## Problem Map\n- 문제 A:\n- 문제 B:\n- 문제 C:\n- 연결관계:\n\n## 확인된 사실\n-\n\n## 아직 확인되지 않은 것\n-\n\n## 주요 이해관계자\n역할 중심:\n-\n\n## 우선순위\n### 지금 해결\n1.\n2.\n### 다음 30~90일\n1.\n2.\n### 중장기\n1.\n2.\n\n## 현재 Phase\nStabilize / Understand / Design / Act / Review\n- 설명:\n\n## 선택지\n### Option A\n- 내용:\n- 장점:\n- 위험:\n### Option B\n- 내용:\n- 장점:\n- 위험:\n\n## 이미 결정한 것\n-\n## 아직 결정하지 않은 것\n-\n## 다음 행동 3가지\n1.\n2.\n3.\n## 다음 Review\n-\n## 최근 변화\n- 날짜:\n- 변화:\n- Case에 미치는 영향:\n\n# Closed Cases\n- Case:\n- 종료일:\n- 결론:\n- 배움:\n- Follow-up:\n", "Weekly_Log.md": "# Weekly_Log\n> 주 1회, 5~10분 이내. 모든 일을 기록하지 말고 최근 변화만 남깁니다.\n\n## WEEK\n- 기간:\n\n## 이번 주 TOP 3\n1.\n2.\n3.\n\n## 완료한 일\n-\n\n## 미완료\n-\n- 이유:\n\n## Project 변화\n- 프로젝트:\n- 변화:\n- 다음 행동:\n\n## Case 변화\n- Case:\n- 새롭게 알게 된 것:\n- 변경된 판단:\n- 다음 행동:\n\n## 사람과 관계\n- 의미 있었던 변화:\n- Follow-up:\n\n## 의미 있었던 변화\n-\n\n## 문제·위험\n-\n\n## 기다리는 일\n- [사람/기관] — [내용]\n\n## 감사\n1.\n2.\n\n## 기도\n1.\n2.\n3.\n\n## 다음 주 TOP 3\n1.\n2.\n3.\n\n## AI에게 전달할 한 줄 Context\n-\n"}</script>
+<script>
+(function(){
+  var KEY='missionai-seminar-v2', S={};
+  try{ S=JSON.parse(localStorage.getItem(KEY)||'{}')||{}; }catch(e){ S={}; }
+  function save(){ try{ localStorage.setItem(KEY,JSON.stringify(S)); }catch(e){} }
+  function $(id){return document.getElementById(id);}
+  function esc(t){return String(t==null?'':t).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+  function pad(n){return (n<10?'0':'')+n;}
+
+  var FILES={};try{FILES=JSON.parse($('mfiles').textContent);}catch(e){}
+  /* nav */
+  var TABS=[['s1','1 알아보기'],['inst','2 설치·연결'],['s2','3 따라 해보기'],['s3','4 내 것으로'],['fac','강사용']];
+  var nav=$('nav');
+  nav.innerHTML=TABS.map(function(t){return '<button type="button" data-target="'+t[0]+'"'+(t[0]==='fac'?' class="fac"':'')+'>'+t[1]+'</button>';}).join('');
+  function go(id){
+    if(!$(id)) id='s1';
+    document.querySelectorAll('.section').forEach(function(s){s.classList.toggle('active',s.id===id);});
+    nav.querySelectorAll('button').forEach(function(b){var on=b.dataset.target===id;b.classList.toggle('active',on);if(on)b.scrollIntoView({block:'nearest',inline:'center'});});
+    window.scrollTo({top:0});
+    try{history.replaceState(null,'','#'+id);}catch(e){}
+  }
+  document.addEventListener('click',function(e){var t=e.target.closest('[data-target],[data-go]');if(t)go(t.dataset.target||t.dataset.go);});
+
+  /* theme */
+  var tb=$('theme');
+  function themeNow(){var d=document.documentElement.getAttribute('data-theme');if(d)return d;return (window.matchMedia&&matchMedia('(prefers-color-scheme: dark)').matches)?'dark':'light';}
+  function tl(){tb.textContent=themeNow()==='dark'?'☀ 밝게':'☾ 어둡게';}
+  tb.addEventListener('click',function(){document.documentElement.setAttribute('data-theme',themeNow()==='dark'?'light':'dark');tl();});
+  tl();
+
+  /* copy */
+  function copyText(text,btn,orig){
+    function ok(){btn.textContent='복사됨!';btn.classList.add('done');setTimeout(function(){btn.textContent=orig;btn.classList.remove('done');},1400);}
+    function fb(){var ta=document.createElement('textarea');ta.value=text;ta.style.cssText='position:fixed;opacity:0';document.body.appendChild(ta);ta.select();try{document.execCommand('copy');ok();}catch(e){btn.textContent='직접 선택해 복사';}ta.remove();}
+    if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(text).then(ok,fb);}else fb();
+  }
+  document.addEventListener('click',function(e){
+    var b=e.target.closest('.copy'); if(!b) return;
+    var orig=b.dataset.o||(b.dataset.o=b.textContent);
+    if(b.dataset.file){copyText(FILES[b.dataset.file]||'',b,orig);return;}
+    if(b.dataset.gen){copyText(genProfile(),b,orig);return;}
+    if(b.dataset.from){var v=($(b.dataset.from).value||'').trim();if(!v){b.textContent='먼저 문장을 쓰세요';setTimeout(function(){b.textContent=orig;},1400);return;}copyText(v,b,orig);return;}
+    var p=b.parentElement.querySelector('p'); if(p) copyText(p.innerText,b,orig);
+  });
+
+  /* ---------- 내 것으로 ---------- */
+  var PROFILE=[['pf1','어느 나라·지역에서 사역합니까?','캄보디아 / 프놈펜 외곽'],['pf2','주로 누구를 섬깁니까?','청소년 / 현지 교사 / 청년리더'],
+    ['pf3','현재 중요한 사역 3가지는?','진로교육 / 교사훈련 / 리더훈련'],['pf4','어떤 언어를 사용합니까?','한국어·영어 + 크메르어 통역'],
+    ['pf5','주로 누구와 함께 일합니까?','현지 목회자 2 / 교사 4 / 청년리더 6'],['pf6','가장 부담되는 업무는?','교육자료 / 보고 / 일정관리']];
+  $('profile').innerHTML=PROFILE.map(function(p){return '<div><label class="f" for="'+p[0]+'">'+p[1]+'</label><input class="in" id="'+p[0]+'" data-k="'+p[0]+'" placeholder="예) '+esc(p[2])+'"></div>';}).join('');
+  var FCARDS=[['01_CORE_INSTRUCTIONS.md','AI가 일하는 방식 (Core Skill v3.0). 고치지 않습니다.','Skill 지침에 붙여넣기'],
+    ['Mission_Profile.md','나의 사역 환경. 큰 변화가 있을 때만 고칩니다.','처음에 작성'],
+    ['Current_Projects.md','진행 중인 핵심 프로젝트 3~7개.','생길 때마다'],
+    ['Active_Cases.md','여러 문제가 얽힌 복합 고민.','생길 때마다'],
+    ['Weekly_Log.md','이번 주 변화. 5~10분이면 충분합니다.','주 1회']];
+  $('filecards').innerHTML=FCARDS.map(function(f){return '<div class="fcard"><div class="nm"><b>'+f[0]+'</b><span>'+f[1]+'</span></div><span class="fr">'+f[2]+'</span><button class="copy" type="button" data-file="'+f[0]+'">내용 복사</button></div>';}).join('');
+  function genProfile(){
+    function v(k){return (S[k]||'').toString().trim();}
+    return '# Mission_Profile\n\n## 기본\n- 사역 국가/지역: '+v('pf1')+'\n\n## 언어\n- 주 사용 언어/통역: '+v('pf4')+'\n\n## 주요 사역대상\n- 가장 중요한 대상: '+v('pf2')+'\n\n## 핵심 사역\n- '+v('pf3')+'\n\n## 현지 동역 구조\n- 주요 협력자(역할/인원 중심): '+v('pf5')+'\n\n## 부담 업무\n- 가장 부담되는 업무: '+v('pf6')+'\n\n## AI가 지켜야 할 원칙\n- 실명·정확한 위치·연락처는 노출하지 않는다.\n';
+  }
+  var TRIO=[['매일','반복해서 도움받을 일은?','매일 아침 “오늘 뭐부터 하지?”'],['진행 중인 사역','앞으로 30일 안에 진행할 중요한 사역은?','다음 달 교사교육 준비'],['얽힌 고민','지금 가장 복잡하게 얽힌 고민은?','사역 방향이 흔들리는 문제']];
+  $('trio').innerHTML=TRIO.map(function(t,i){return '<div class="item"><b>'+t[0]+'<span class="sub">'+t[1]+'</span></b>'
+    +'<label class="sr" for="t'+i+'">'+t[0]+'</label><input class="in" id="t'+i+'" data-k="t'+i+'" placeholder="예) '+esc(t[2])+'"></div>';}).join('');
+  var WEEK=['지금 가장 급한 일 말하기','“오늘 뭐부터?”로 TOP 3','실제 문서·메시지 하나 만들기','관계·결정 문제 이야기하기','Project 진행상태 확인','교육·설교·자료 만들어 보기','“이번 주 정리해줘”'];
+  function renderWeek(){
+    $('week').innerHTML=WEEK.map(function(w,i){return '<button type="button" class="'+(S['d'+i]?'on':'')+'" data-d="'+i+'" aria-pressed="'+(!!S['d'+i])+'"><b>Day '+(i+1)+'</b>'+w+'</button>';}).join('');
+  }
+  $('week').addEventListener('click',function(e){var b=e.target.closest('[data-d]');if(!b)return;var k='d'+b.dataset.d;S[k]=!S[k];save();renderWeek();update();});
+
+  document.querySelectorAll('[data-k]').forEach(function(el){
+    var v=S[el.dataset.k]; if(v!==undefined){ if(el.type==='checkbox') el.checked=!!v; else el.value=v; }
+    el.addEventListener('input',function(){S[el.dataset.k]=el.type==='checkbox'?el.checked:el.value;save();update();});
+  });
+  function has(k){return !!(S[k]||'').toString().trim();}
+  function updInst(){
+    $('gen').textContent=genProfile();
+    var n=0;['i1','i2','i3','i4','i5'].forEach(function(k){var on=!!S[k];if(on)n++;$(k).classList.toggle('done',on);});
+    $('ibar').style.width=(n/5*100)+'%';$('itxt').textContent=n+' / 5 단계 완료'+(n===5?' · 준비가 끝났습니다':'');
+  }
+  function update(){
+    updInst();
+    var d1=has('urgent'), n=['t0','t1','t2'].filter(has).length, d2=n>=1, wk=WEEK.filter(function(_,i){return S['d'+i];}).length, d3=wk>=1;
+    var ds=[d1,d2,d3], cur=ds.indexOf(false);
+    document.querySelectorAll('#bars div').forEach(function(b,i){b.className=ds[i]?'ok':(i===cur?'on':'');});
+    ['c1','c2','c3'].forEach(function(id,i){$(id).classList.toggle('done',ds[i]);});
+    $('finish').classList.toggle('show',d1&&d2);
+  }
+
+  /* ---------- 강사: 진행표 ---------- */
+  var FLOW=[['00:00','00:10',10,'왜 Mission AI인가?','일반 AI와 Mission AI 비교, 핵심 메시지 3개'],
+    ['00:10','00:20',10,'Live Demo','“이번 주 너무 복잡해” 시연'],
+    ['00:20','00:30',10,'Mission Context','시급한 일 한 줄 쓰기'],
+    ['00:30','00:40',10,'Quick Task','메시지·보고·우선순위 중 1개 실습'],
+    ['00:40','00:55',15,'Project','교사교육 데모 + 내 Project'],
+    ['00:55','01:10',15,'Complex Case','실제 고민을 구조화'],
+    ['01:10','01:20',10,'My Mission AI','내일부터 맡길 일 3가지'],
+    ['01:20','01:30',10,'Q&A + 피드백','7일 시작 계획, 피드백 안내']];
+  var SAYS=['“이 세미나는 Prompt Engineering 교육이 아닙니다.”','“정보보다 우선순위 판단을 보세요.”','“프로필 입력이 목적이 아닙니다. 필요한 만큼만 압니다.”','“작은 일은 빨리 끝냅니다.”','“여러 단계의 일은 이어서 관리합니다.”','“복잡한 문제는 답보다 구조가 먼저입니다.”','“내일부터 세 가지를 반복하면 됩니다.”','“완벽한 제품보다 실제 사용사례가 필요합니다.”'];
+  function renderFlow(){
+    $('tl').innerHTML=FLOW.map(function(r,i){var s=S['fl'+i]||'대기';
+      return '<div class="it '+(s==='진행'?'cur':s==='완료'?'fin':'')+'"><span class="t">'+r[0]+' – '+r[1]+' · '+r[2]+'분</span>'
+        +'<span class="what"><b>'+r[3]+'</b><span>'+r[4]+'</span><em>'+SAYS[i]+'</em></span>'
+        +'<button type="button" class="pill" data-s="'+s+'" data-fl="'+i+'" aria-label="'+r[3]+' 상태: '+s+'">'+s+'</button></div>';}).join('');
+    var fd=FLOW.filter(function(_,i){return S['fl'+i]==='완료';}).length;
+    $('f-done').innerHTML=fd+'<small> / 8</small>'; $('f-bar').style.width=(fd/8*100)+'%';
+    timer();
+  }
+  $('tl').addEventListener('click',function(e){
+    var b=e.target.closest('[data-fl]');if(!b)return;var i=+b.dataset.fl,k='fl'+i;
+    var nx={'대기':'진행','진행':'완료','완료':'대기'}[S[k]||'대기'];
+    if(nx==='진행'){FLOW.forEach(function(_,j){if(S['fl'+j]==='진행')S['fl'+j]='완료';});S.flStart=Date.now();}
+    S[k]=nx;save();renderFlow();
+  });
+  $('flowReset').addEventListener('click',function(){FLOW.forEach(function(_,i){delete S['fl'+i];});delete S.flStart;save();renderFlow();});
+  function timer(){
+    var cur=-1;for(var i=0;i<FLOW.length;i++)if(S['fl'+i]==='진행'){cur=i;break;}
+    var t=$('f-timer'),n=$('f-now');
+    if(cur<0){n.textContent=FLOW.every(function(_,j){return S['fl'+j]==='완료';})?'모두 완료':'시작 전';t.textContent='';t.classList.remove('over');return;}
+    n.textContent=FLOW[cur][3];
+    var left=FLOW[cur][2]*60-Math.floor((Date.now()-(S.flStart||Date.now()))/1000),a=Math.abs(left);
+    t.classList.toggle('over',left<0);
+    t.textContent=(left<0?'+':'남은 ')+pad(Math.floor(a/60))+':'+pad(a%60)+(left<0?' 초과':'');
+  }
+  setInterval(timer,1000);
+
+  /* ---------- 강사: 피드백 ---------- */
+  var FB=Array.isArray(S.fb)?S.fb:[], sc={u:0,a:0};
+  ['u','a'].forEach(function(k){
+    $('sc-'+k).innerHTML=[1,2,3,4,5].map(function(n){return '<label><input type="radio" name="sc'+k+'" value="'+n+'"><span>'+n+'</span></label>';}).join('');
+    $('sc-'+k).addEventListener('change',function(e){sc[k]=+e.target.value;});
+  });
+  function avg(k){var v=FB.filter(function(f){return f[k]>0;});return v.length?v.reduce(function(s,f){return s+f[k];},0)/v.length:null;}
+  function renderFb(){
+    var au=avg('u'),aa=avg('a'),c=function(k){return FB.filter(function(f){return f[k];}).length;};
+    $('fb-stat').innerHTML='<div><b>'+FB.length+'</b><span>받은 피드백</span></div><div><b>'+(au==null?'–':au.toFixed(1))+'</b><span>상황 이해</span></div><div><b>'+(aa==null?'–':aa.toFixed(1))+'</b><span>바로 쓸 수 있음</span></div>'
+      +'<div class="'+(c('s')?'alert':'')+'"><b>'+c('s')+'</b><span>민감정보 문제</span></div><div><b>'+c('q')+'</b><span>질문 많음</span></div><div><b>'+c('c')+'</b><span>상황 미반영</span></div>';
+    $('fb-list').innerHTML=FB.length?FB.map(function(f,i){return '<div class="entry"><span><b>#'+(i+1)+'</b> 이해 '+(f.u||'–')+' · 실용 '+(f.a||'–')+' '+(f.s?'<span class="flag">민감정보</span> ':'')+(f.t?'<br>'+esc(f.t):'')+'</span><button type="button" class="btn ghost" style="padding:4px 12px;font-size:12.5px" data-del="'+i+'">삭제</button></div>';}).join(''):'<div class="empty">아직 받은 피드백이 없습니다.</div>';
+  }
+  $('fb-add').addEventListener('click',function(){
+    var m=$('fb-msg');
+    if(!sc.u&&!sc.a&&!$('fb-t').value.trim()){m.textContent='점수나 소감을 하나 입력하세요.';return;}
+    FB.push({u:sc.u,a:sc.a,t:$('fb-t').value.trim(),s:$('fb-s').checked,q:$('fb-q').checked,c:$('fb-c').checked});
+    S.fb=FB;save();$('fb-t').value='';['fb-s','fb-q','fb-c'].forEach(function(id){$(id).checked=false;});
+    document.querySelectorAll('.score input').forEach(function(r){r.checked=false;});sc={u:0,a:0};
+    m.textContent='추가했습니다.';setTimeout(function(){m.textContent='';},1600);renderFb();
+  });
+  $('fb-list').addEventListener('click',function(e){var d=e.target.closest('[data-del]');if(!d)return;FB.splice(+d.dataset.del,1);S.fb=FB;save();renderFb();});
+
+  renderWeek();renderFlow();renderFb();update();
+  var h=(location.hash||'').replace('#','');go(h||'s1');
+})();
+</script>
