@@ -88,6 +88,19 @@ h1,h2,h3,p{margin:0;text-wrap:balance}
 .prep .need{border-color:var(--warn);background:var(--warnbg)}
 .prep .need span{color:var(--ink)}
 
+
+/* car analogy */
+.car{background:var(--surface);border-radius:14px;box-shadow:var(--shadow);padding:14px 14px 18px;min-width:0}
+.car svg{display:block;width:100%;height:auto}
+.car .sum{margin:6px 0 14px;text-align:center;font-family:var(--serif);font-size:clamp(16px,2.6vw,19px);line-height:1.5}
+.car .sum b{color:var(--blue)}
+.cgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:10px}
+.cgrid>div{background:var(--soft);border-radius:12px;padding:12px 14px 13px}
+.cgrid .n{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;border:2.5px solid var(--warn);background:var(--surface);font-weight:900;font-size:13px;margin-right:7px}
+.cgrid h3{display:flex;align-items:center;font-size:14.5px;font-weight:900;margin-bottom:4px}
+.cgrid h3 small{display:block;font-size:12px;font-weight:700;color:var(--blue)}
+.cgrid p{font-size:13.5px;color:var(--gray);margin:0;word-break:keep-all}
+
 /* modes */
 .mode{background:var(--surface);border-radius:16px;box-shadow:var(--shadow);padding:20px 22px;margin-top:14px;min-width:0}
 .mode .top{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
@@ -265,6 +278,59 @@ label.f{display:block;font-weight:700;font-size:13.5px;margin-bottom:5px}
           <ol><li>교사교육 교육시간 확정</li><li>통역자 자료 전달</li><li>활동지 제작 (포스터는 위임)</li></ol></div>
         <div class="cap">→ 알고 있는 사역 환경으로 먼저 정리하고, 판단은 나에게 맡깁니다.</div>
       </div>
+    </div>
+  </div>
+
+  <div class="block">
+    <h2>자동차에 비유하면</h2>
+    <p class="lead">핸들은 선교사님이 잡습니다. 길 찾기·메모·기록은 Mission AI가 맡습니다.</p>
+    <div class="car">
+      <svg viewBox="0 0 640 270" role="img" aria-label="자동차 그림: 운전자는 선교사님, 내비게이션·옆자리 부기사·계기판·차선 안내·경고음과 잠금이 Mission AI의 다섯 가지 역할을 나타냅니다.">
+  <!-- road -->
+  <rect x="0" y="222" width="640" height="48" style="fill:var(--soft2)"/>
+  <path d="M0 246H640" style="stroke:var(--surface);stroke-width:3;stroke-dasharray:22 16"/>
+  <!-- close-up of console -->
+  <path d="M410 122L436 112" style="stroke:var(--lblue);stroke-width:2;stroke-dasharray:4 4"/>
+  <rect x="432" y="14" width="196" height="100" rx="14" style="fill:var(--navy);stroke:var(--lblue);stroke-width:2"/>
+  <rect x="444" y="26" width="84" height="76" rx="8" style="fill:var(--navy2);stroke:var(--lblue);stroke-width:1.5"/>
+  <path d="M454 92L474 70L492 80L516 44" style="fill:none;stroke:var(--lblue);stroke-width:4;stroke-linecap:round;stroke-linejoin:round"/>
+  <circle cx="516" cy="44" r="6" style="fill:var(--warn)"/>
+  <circle cx="454" cy="92" r="4" style="fill:#fff"/>
+  <path d="M552 88A28 28 0 1 1 608 88" style="fill:none;stroke:var(--lblue);stroke-width:5;stroke-linecap:round"/>
+  <path d="M580 84L596 62" style="stroke:#fff;stroke-width:4;stroke-linecap:round"/>
+  <circle cx="580" cy="84" r="5" style="fill:#fff"/>
+  <!-- car -->
+  <path d="M84 206V170Q84 154 102 150L186 142L222 102Q230 94 244 94H384Q398 94 406 104L428 142L454 146Q482 152 482 174V206Z" style="fill:var(--blue)"/>
+  <path d="M234 106L228 138H330V106Z" style="fill:var(--soft)"/>
+  <path d="M338 106V138H414L394 106Z" style="fill:var(--soft)"/>
+  <!-- passenger + notepad -->
+  <circle cx="276" cy="124" r="12" style="fill:var(--navy)"/>
+  <rect x="296" y="116" width="20" height="22" rx="2" style="fill:#fff;stroke:var(--navy);stroke-width:2"/>
+  <path d="M300 123H312M300 128H312M300 133H308" style="stroke:var(--blue);stroke-width:2"/>
+  <!-- driver + wheel -->
+  <circle cx="372" cy="124" r="12" style="fill:var(--navy)"/>
+  <path d="M388 138L402 128" style="stroke:var(--navy);stroke-width:5;stroke-linecap:round"/>
+  <!-- lock on door -->
+  <path d="M276 166V160A9 9 0 0 1 294 160V166" style="fill:none;stroke:var(--warnbg);stroke-width:3.5"/>
+  <rect x="272" y="166" width="26" height="20" rx="4" style="fill:var(--warnbg);stroke:var(--warn);stroke-width:2"/>
+  <circle cx="285" cy="176" r="3" style="fill:var(--warn)"/>
+  <!-- wheels -->
+  <circle cx="170" cy="208" r="27" style="fill:var(--navy);stroke:var(--lblue);stroke-width:3"/><circle cx="170" cy="208" r="10" style="fill:var(--soft)"/>
+  <circle cx="400" cy="208" r="27" style="fill:var(--navy);stroke:var(--lblue);stroke-width:3"/><circle cx="400" cy="208" r="10" style="fill:var(--soft)"/>
+  <!-- lanes ahead -->
+  <path d="M510 236H560" style="fill:none;stroke:var(--ink);stroke-width:5;stroke-linecap:round"/>
+  <path d="M560 236Q584 236 596 214" style="fill:none;stroke:var(--good);stroke-width:6;stroke-linecap:round"/>
+  <path d="M588 212L598 206L602 220Z" style="fill:var(--good)"/>
+  <path d="M560 236Q592 238 618 238" style="fill:none;stroke:var(--gray);stroke-width:4;stroke-linecap:round;stroke-dasharray:2 9"/>
+  <!-- driver / passenger tags -->
+  <text x="372" y="80" text-anchor="middle" style="fill:var(--ink);font:900 15px var(--sans)">선교사님</text>
+  <text x="256" y="80" text-anchor="middle" style="fill:var(--blue);font:900 15px var(--sans)">Mission AI</text>
+  <path d="M372 86V108M276 86V108" style="stroke:var(--gray);stroke-width:1.5;stroke-dasharray:3 3"/>
+  <!-- markers -->
+  <g><circle cx="446" cy="24" r="15" style="fill:var(--surface);stroke:var(--warn);stroke-width:3"/><text x="446" y="30" text-anchor="middle" style="fill:var(--ink);font:900 17px var(--sans)">1</text></g><g><circle cx="322" cy="66" r="15" style="fill:var(--surface);stroke:var(--warn);stroke-width:3"/><text x="322" y="72" text-anchor="middle" style="fill:var(--ink);font:900 17px var(--sans)">2</text></g><g><circle cx="590" cy="24" r="15" style="fill:var(--surface);stroke:var(--warn);stroke-width:3"/><text x="590" y="30" text-anchor="middle" style="fill:var(--ink);font:900 17px var(--sans)">3</text></g><g><circle cx="560" cy="194" r="15" style="fill:var(--surface);stroke:var(--warn);stroke-width:3"/><text x="560" y="200" text-anchor="middle" style="fill:var(--ink);font:900 17px var(--sans)">4</text></g><g><circle cx="285" cy="224" r="15" style="fill:var(--surface);stroke:var(--warn);stroke-width:3"/><text x="285" y="230" text-anchor="middle" style="fill:var(--ink);font:900 17px var(--sans)">5</text></g>
+</svg>
+      <div class="sum">운전은 <b>선교사님</b>이, 길 안내와 정리는 <b>Mission AI</b>가</div>
+      <div class="cgrid"><div><h3><span class="n">1</span><span>내비게이션<small>오늘 할 일 정하기</small></span></h3><p>“오늘 뭐부터 하지?” 하면 우선순위 3가지와 이유를 알려 주고, 위임하거나 미룰 일도 나눠 줍니다.</p></div><div><h3><span class="n">2</span><span>옆자리 부기사<small>문서 초안 쓰기</small></span></h3><p>후원 보고, 회의록, 성경공부안, 현지 목회자께 보낼 메시지의 초안을 써 줍니다. 읽고 고치기만 하세요.</p></div><div><h3><span class="n">3</span><span>계기판<small>사역 진행 관리</small></span></h3><p>완료·진행·문제·기다림·다음 행동을 한눈에 보여 줍니다. 기록에 없는 일은 완료로 만들지 않습니다.</p></div><div><h3><span class="n">4</span><span>차선 안내<small>얽힌 고민 풀기</small></span></h3><p>한꺼번에 답하지 않고 지금 할 일 → 30~90일 → 중장기 순서로 알려 줍니다.</p></div><div><h3><span class="n">5</span><span>경고음·잠금<small>방향과 보안 지키기</small></span></h3><p>“내가 빠져도 이어질까?”를 확인해 현지 지도자가 이끄는 길로 안내하고, 실명·위치·연락처는 익명화하도록 권합니다.</p></div></div>
     </div>
   </div>
 
