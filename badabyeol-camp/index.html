@@ -1,0 +1,733 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="바다별 캠프 · 우리 마음의 별자리 — 24문항으로 나의 마음 별을 찾고 친구들과 더 잘 지내는 꿀팁을 받아 보세요.">
+<meta property="og:title" content="바다별 캠프 마음 별 찾기">
+<meta property="og:description" content="24문항 DISC로 나의 별 찾기 · 우리 마음의 별자리">
+<meta name="theme-color" content="#06101f">
+<title>바다별 캠프 마음 별 찾기</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Gowun+Dodum&family=Jua&display=swap">
+<style>
+/* Layout: 한 손으로 쓰는 폰 앱 — 밤바다 위에 뜬 한 줄 기둥. 시작 → 24문항 → 나의 별 */
+:root{
+  --sea-deep:#06101f;
+  --sea:#0c1c38;
+  --tide:#123a52;
+  --panel:rgba(16,32,62,.78);
+  --panel-solid:#13254a;
+  --line:rgba(170,195,255,.18);
+  --ink:#eef2ff;
+  --ink-dim:#a7b4d4;
+  --star:#ffe49a;
+  --star-ink:#1b1606;
+  --d:#ff8a70;
+  --i:#ffd45c;
+  --s:#6fe0b0;
+  --c:#8cbcff;
+  --f-display:"Jua","Gowun Dodum","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  --f-body:"Gowun Dodum","Apple SD Gothic Neo","Malgun Gothic","Noto Sans KR",sans-serif;
+  --f-hand:"Gaegu","Gowun Dodum","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  color-scheme:dark;
+}
+[hidden]{display:none!important}
+html,body{min-height:100%}
+body{
+  background:linear-gradient(180deg,var(--sea-deep) 0%,var(--sea) 55%,var(--tide) 100%) fixed;
+  background-color:var(--sea-deep);
+  color:var(--ink);
+  font-family:var(--f-body);
+  font-size:16px;
+  line-height:1.65;
+  -webkit-font-smoothing:antialiased;
+}
+#sky{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none}
+.wrap{
+  position:relative;z-index:1;
+  max-width:560px;margin:0 auto;
+  padding-left:max(16px,env(safe-area-inset-left,0px));
+  padding-right:max(16px,env(safe-area-inset-right,0px));
+  padding-block:20px 56px;
+  display:flex;flex-direction:column;gap:20px;
+}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:13px;color:var(--ink-dim);letter-spacing:.04em}
+.topbar b{font-family:var(--f-display);font-weight:400;color:var(--star);font-size:15px;letter-spacing:.02em}
+h1,h2,h3{font-family:var(--f-display);font-weight:400;margin:0;text-wrap:balance;line-height:1.3}
+p{margin:0}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:20px;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.eyebrow{font-size:12px;letter-spacing:.12em;color:var(--ink-dim)}
+.hand{font-family:var(--f-hand);font-size:21px;line-height:1.4}
+.btn{
+  appearance:none;border:0;cursor:pointer;font:inherit;
+  font-family:var(--f-display);font-size:19px;
+  background:var(--star);color:var(--star-ink);
+  border-radius:999px;padding:14px 22px;width:100%;
+  box-shadow:0 0 0 0 rgba(255,228,154,.0),0 8px 24px rgba(255,228,154,.18);
+  transition:transform .15s ease,box-shadow .2s ease;
+}
+.btn:hover{transform:translateY(-1px);box-shadow:0 10px 30px rgba(255,228,154,.3)}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line);box-shadow:none;font-size:16px}
+.btn:focus-visible,.opt:focus-visible,.tab:focus-visible,.trait:focus-visible,input:focus-visible{outline:3px solid var(--star);outline-offset:3px}
+
+/* ---------- intro ---------- */
+.hero{display:flex;flex-direction:column;gap:12px;padding-top:8px}
+.hero h1{font-size:clamp(34px,9vw,46px);color:var(--ink)}
+.hero h1 em{font-style:normal;color:var(--star)}
+.hero .lead{color:var(--ink-dim);font-size:16px}
+.stars4{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.mini{display:flex;gap:10px;align-items:center;padding:12px;border-radius:14px;background:rgba(255,255,255,.04);border:1px solid var(--line);min-width:0}
+.mini svg{flex:none}
+.mini b{font-family:var(--f-display);font-weight:400;font-size:17px;display:block}
+.mini span{font-size:12.5px;color:var(--ink-dim);display:block;line-height:1.4}
+.rules{display:flex;flex-direction:column;gap:8px;margin:0;padding:0;list-style:none;font-size:14.5px;color:var(--ink-dim)}
+.rules li{display:flex;gap:8px;align-items:flex-start}
+.rules li svg{flex:none;margin-top:5px}
+.field{display:flex;flex-direction:column;gap:6px}
+.field label{font-size:14px;color:var(--ink-dim)}
+.field input{
+  font:inherit;font-size:17px;color:var(--ink);background:rgba(0,0,0,.25);
+  border:1px solid var(--line);border-radius:12px;padding:12px 14px;width:100%;box-sizing:border-box;
+}
+.field input::placeholder{color:rgba(167,180,212,.6)}
+.scale-hint{display:flex;justify-content:space-between;gap:8px;font-size:13px;color:var(--ink-dim)}
+
+/* ---------- quiz ---------- */
+.progress{display:flex;flex-direction:column;gap:10px}
+.progress-row{display:flex;justify-content:space-between;align-items:baseline}
+.count{font-family:var(--f-display);font-size:18px;color:var(--star);font-variant-numeric:tabular-nums}
+.dots{display:grid;grid-template-columns:repeat(24,1fr);gap:4px}
+.dots i{display:block;height:6px;border-radius:3px;background:rgba(255,255,255,.12);transition:background .25s}
+.dots i.on{background:var(--star);box-shadow:0 0 8px rgba(255,228,154,.6)}
+.dots i.now{background:rgba(255,228,154,.45)}
+.qcard{display:flex;flex-direction:column;gap:18px;min-height:128px}
+.qtext{font-family:var(--f-display);font-size:clamp(22px,5.6vw,26px);line-height:1.45;text-wrap:pretty}
+.opts{display:flex;flex-direction:column;gap:10px}
+.opt{
+  appearance:none;cursor:pointer;font:inherit;color:var(--ink);text-align:left;
+  display:flex;align-items:center;gap:14px;
+  background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:14px;
+  padding:12px 14px;transition:background .15s,border-color .15s,transform .1s;
+}
+.opt:hover{background:rgba(255,255,255,.08)}
+.opt:active{transform:scale(.99)}
+.opt .n{
+  flex:none;width:34px;height:34px;border-radius:50%;display:grid;place-items:center;
+  font-family:var(--f-display);font-size:17px;border:1px solid var(--line);font-variant-numeric:tabular-nums;
+}
+.opt .lab{font-size:16px}
+.opt .glow{margin-left:auto;display:flex;gap:2px}
+.opt.sel{border-color:var(--star);background:rgba(255,228,154,.1)}
+.opt.sel .n{background:var(--star);color:var(--star-ink);border-color:var(--star)}
+.qnav{display:flex;gap:10px}
+.qnav .btn{width:auto;flex:1}
+
+/* ---------- result ---------- */
+.res-hero{display:flex;flex-direction:column;gap:6px;text-align:left;padding-top:4px}
+.res-hero .who{color:var(--ink-dim);font-size:15px}
+.res-hero h2{font-size:clamp(40px,11vw,54px);line-height:1.15}
+.res-hero .en{font-size:13px;letter-spacing:.1em;color:var(--ink-dim)}
+.res-hero .tag{font-family:var(--f-hand);font-size:23px;line-height:1.35}
+.twin{font-size:14.5px;color:var(--ink-dim);border-left:3px solid var(--star);padding-left:12px}
+.sky-card{display:flex;flex-direction:column;gap:14px}
+#constel{width:100%;height:260px;display:block}
+.bars{display:flex;flex-direction:column;gap:8px}
+.bar{display:grid;grid-template-columns:62px 1fr 28px;gap:10px;align-items:center;font-size:14px}
+.bar .track{height:8px;border-radius:4px;background:rgba(255,255,255,.08);overflow:hidden}
+.bar .fill{height:100%;border-radius:4px}
+.bar .v{text-align:right;font-variant-numeric:tabular-nums;color:var(--ink-dim)}
+.private{font-size:12.5px;color:var(--ink-dim)}
+.tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.tab{
+  appearance:none;cursor:pointer;font:inherit;color:var(--ink-dim);
+  background:transparent;border:1px solid var(--line);border-radius:12px;padding:8px 4px;
+  display:flex;flex-direction:column;align-items:center;gap:2px;font-size:13px;line-height:1.2;
+}
+.tab b{font-family:var(--f-display);font-weight:400;font-size:15px;color:var(--ink)}
+.tab small{font-size:11px;color:var(--star);min-height:13px}
+.tab[aria-selected="true"]{background:rgba(255,255,255,.08);border-color:var(--tc,var(--star))}
+.sec{display:flex;flex-direction:column;gap:12px}
+.sec h3{font-size:21px;display:flex;align-items:center;gap:8px}
+.sec .sub{font-size:14px;color:var(--ink-dim)}
+.traits{display:flex;flex-direction:column;gap:8px}
+.trait{
+  appearance:none;cursor:pointer;font:inherit;color:var(--ink);text-align:left;
+  background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:14px;padding:12px 14px;
+  display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;
+}
+.trait .pick{font-size:12px;color:var(--ink-dim);border:1px solid var(--line);border-radius:999px;padding:3px 9px;white-space:nowrap}
+.trait.sel{border-color:var(--tc);background:rgba(255,255,255,.08)}
+.trait.sel .pick{background:var(--tc);color:var(--star-ink);border-color:var(--tc)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.say{background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.say .k{font-size:12.5px;color:var(--ink-dim);letter-spacing:.04em}
+.say .hand{font-size:20px}
+.shine{font-family:var(--f-hand);font-size:22px;line-height:1.4;color:var(--tc)}
+.tips{display:flex;flex-direction:column;gap:12px;margin:0;padding:0;list-style:none}
+.tips li{display:grid;grid-template-columns:28px 1fr;gap:10px}
+.tips .num{width:28px;height:28px;border-radius:50%;display:grid;place-items:center;font-family:var(--f-display);font-size:15px;background:var(--tc);color:var(--star-ink)}
+.tips b{display:block;font-family:var(--f-display);font-weight:400;font-size:17px}
+.tips p{font-size:15px;color:var(--ink-dim)}
+.tips .try{display:inline-block;margin-top:4px;font-family:var(--f-hand);font-size:19px;color:var(--ink)}
+.cheer{font-family:var(--f-hand);font-size:22px;line-height:1.45;text-align:center;padding:6px 4px}
+.others{display:flex;flex-direction:column;gap:8px}
+.other{display:grid;grid-template-columns:26px 1fr;gap:10px;padding:12px;border-radius:14px;border:1px solid var(--line);background:rgba(255,255,255,.03)}
+.other b{font-family:var(--f-display);font-weight:400;font-size:16px}
+.other p{font-size:14.5px;color:var(--ink-dim)}
+.sheet{display:flex;flex-direction:column;gap:12px;border:1.5px dashed rgba(255,228,154,.45)}
+.sheet pre{
+  margin:0;white-space:pre-wrap;word-break:keep-all;overflow-wrap:anywhere;
+  font-family:var(--f-hand);font-size:19px;line-height:1.55;color:var(--ink);
+  background:rgba(0,0,0,.22);border-radius:12px;padding:14px;
+}
+.copied{font-size:13px;color:var(--s);min-height:18px;text-align:center}
+.promise{font-size:14px;color:var(--ink-dim);text-align:center;line-height:1.8}
+.promise b{color:var(--ink);font-weight:400}
+.foot{font-size:12px;color:var(--ink-dim);text-align:center;opacity:.8}
+
+@media (max-width:380px){
+  .two{grid-template-columns:1fr}
+  .stars4{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion:reduce){
+  *{transition:none!important;animation:none!important}
+}
+.fade{animation:fadeUp .35s ease both}
+@keyframes fadeUp{from{opacity:.0;transform:translateY(8px)}to{opacity:1;transform:none}}
+</style>
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}</style>
+</head>
+<body>
+<canvas id="sky" aria-hidden="true"></canvas>
+
+<main class="wrap">
+  <div class="topbar"><b>바다별 캠프</b><span>우리 마음의 별자리 · 02 DISC</span></div>
+
+  <!-- ===== 시작 ===== -->
+  <section id="intro" class="fade" style="display:flex;flex-direction:column;gap:20px">
+    <div class="hero">
+      <span class="eyebrow">조별 자율활동 02 · DISC로 나 알아보기</span>
+      <h1>내 마음 속 <em>별</em>은<br>어떤 빛일까?</h1>
+      <p class="lead">24개 문장을 읽고 “이거 완전 나야!” 싶은 만큼 1~5점을 골라 줘. 3분이면 끝나. 다 하면 나랑 닮은 별과, 친구들이랑 더 잘 지내는 꿀팁이 나와.</p>
+    </div>
+
+    <div class="stars4" id="miniStars"></div>
+
+    <div class="panel" style="display:flex;flex-direction:column;gap:16px">
+      <div class="field">
+        <label for="nick">이름이나 별명 (안 써도 돼)</label>
+        <input id="nick" type="text" maxlength="12" placeholder="예: 바다, 민지" autocomplete="off">
+      </div>
+      <ul class="rules">
+        <li><span id="r1"></span>정답은 없어. 잘 보이려고 말고, 평소의 나를 떠올리면서 골라 줘.</li>
+        <li><span id="r2"></span>결과는 내 화면에만 나와. 점수를 친구한테 보여 줄 필요 없어.</li>
+        <li><span id="r3"></span>DISC는 나를 비춰 보는 거울일 뿐, 친구를 단정하는 꼬리표가 아니야.</li>
+      </ul>
+      <button class="btn" id="startBtn" type="button">내 별 찾으러 가기</button>
+    </div>
+  </section>
+
+  <!-- ===== 질문 ===== -->
+  <section id="quiz" hidden style="display:flex;flex-direction:column;gap:18px">
+    <div class="progress">
+      <div class="progress-row"><span class="eyebrow">나랑 얼마나 비슷해?</span><span class="count" id="count">1 / 24</span></div>
+      <div class="dots" id="dots"></div>
+    </div>
+    <div class="panel qcard">
+      <p class="qtext" id="qtext"></p>
+      <div class="opts" id="opts" role="radiogroup" aria-labelledby="qtext"></div>
+    </div>
+    <div class="qnav">
+      <button class="btn ghost" id="prevBtn" type="button">이전 문장</button>
+    </div>
+    <p class="foot">키보드 숫자 1~5로도 고를 수 있어</p>
+  </section>
+
+  <!-- ===== 결과 ===== -->
+  <section id="result" hidden style="display:flex;flex-direction:column;gap:20px"></section>
+
+  <p class="foot">바다별 캠프 · 우리 마음의 별자리 · 글로벌코칭아카데미</p>
+</main>
+
+<script>
+(function(){
+"use strict";
+
+/* ---------------- 유형 데이터 ---------------- */
+const TYPES = {
+  D:{
+    key:"D", name:"혜성별", en:"D · 주도형", hex:"#ff8a70", css:"var(--d)",
+    short:"앞장서는 별",
+    tagline:"목표를 향해 쭉 날아가는 별",
+    blend:"필요할 땐 앞장서서 끌고 가는 힘도 있어",
+    traits:[
+      ["다들 망설일 때 먼저 “가자!” 하고 시작하는 편","친구들이 머뭇거릴 때 네가 첫발을 떼 줘. 네 덕분에 조가 움직이기 시작해."],
+      ["솔직하고 시원시원하게 말하는 편","돌려 말하지 않아서, 친구들은 너랑 있으면 뭘 해야 할지 헷갈리지 않아."],
+      ["어려운 도전일수록 더 신나는 편","미션이 어려울수록 눈이 반짝여. 그 에너지가 친구들한테 용기가 돼."]
+    ],
+    shine:"미션이 시작되고, 내가 앞장서서 길을 열 때",
+    comfy:"빨리 정하고 바로 해 볼 때",
+    wish:"자기 생각을 시원하게 말해 주면",
+    intro:"나는 뭐든 먼저 해 보는 혜성별이야. 하고 싶은 거 있으면 솔직하게 말해 줘!",
+    tips:[
+      ["속도 맞추기","네가 빠른 만큼 친구들은 따라오느라 숨이 찰 수 있어. 정하기 전에 한 번만 물어봐 줘.","“다들 어때? 괜찮아?”"],
+      ["말의 온도 1도 올리기","네 말은 직진이라 가끔 차갑게 들려. 같은 말도 물어보는 말로 바꾸면 친구들이 훨씬 잘 따라와.","“이렇게 하면 어때?”"],
+      ["1등보다 다 같이 도착","조 활동의 진짜 승리는 다 같이 끝까지 가는 거야. 뒤처진 친구를 챙기는 게 리더의 진짜 힘이야.","“같이 가자, 천천히 해도 돼.”"]
+    ],
+    cheer:"혜성은 긴 꼬리가 있어서 아름다워.\n뒤따라오는 친구들까지 챙길 때 네 빛이 제일 길게 남아.",
+    withMe:"짧고 분명하게 말해 줘. 이유는 한 줄이면 충분! 결정할 때 의견을 바로 말해 주면 진짜 좋아해."
+  },
+  I:{
+    key:"I", name:"반짝별", en:"I · 사교형", hex:"#ffd45c", css:"var(--i)",
+    short:"분위기 메이커 별",
+    tagline:"어디서든 분위기를 환하게 밝히는 별",
+    blend:"친구들과 웃고 어울리는 밝은 빛도 있어",
+    traits:[
+      ["어색한 분위기를 제일 먼저 깨는 편","네가 웃으면 친구들도 따라 웃어. 조가 금방 편해지는 건 네 덕분이야."],
+      ["처음 본 친구랑도 금방 친해지는 편","낯선 친구들 사이에 다리를 놓아 줘. 너를 통해 조가 하나로 이어져."],
+      ["아이디어가 톡톡 튀는 편","너랑 하면 평범한 활동도 재밌어져. 친구들이 “오, 그거 좋다!” 하게 돼."]
+    ],
+    shine:"다 같이 웃고, 내 아이디어에 친구들이 “오 좋다!” 할 때",
+    comfy:"자유롭게 말하고 웃을 수 있을 때",
+    wish:"내 이야기에 크게 반응해 주면",
+    intro:"나는 분위기 띄우는 반짝별이야. 내 드립에 웃어 주면 더 반짝여!",
+    tips:[
+      ["조용한 친구에게 마이크 넘기기","말 잘하는 네가 다른 친구 차례를 만들어 주면, 진짜 인기 많은 별이 돼.","“너는 어떻게 생각해?”"],
+      ["장난에도 선이 있어","나한테는 장난이어도 친구한테는 상처일 수 있어. 친구 표정이 굳으면 바로 멈추기.","“앗, 미안. 장난이 좀 심했다.”"],
+      ["시작만큼 마무리도 반짝","시작은 네가 최고야. 마무리까지 함께하면 친구들이 너를 더 믿게 돼.","“이것까지 같이 끝내자!”"]
+    ],
+    cheer:"반짝임은 혼자 빛날 때보다\n옆에 있는 별을 비춰 줄 때 더 예뻐.",
+    withMe:"리액션 크게! 이야기에 “오~” 하고 반응해 주고, 같이 웃어 주면 금방 친해질 수 있어."
+  },
+  S:{
+    key:"S", name:"등대별", en:"S · 안정형", hex:"#6fe0b0", css:"var(--s)",
+    short:"곁을 지키는 별",
+    tagline:"친구들 곁을 든든하게 지켜 주는 별",
+    blend:"친구를 먼저 챙기는 따뜻한 빛도 있어",
+    traits:[
+      ["혼자 있는 친구를 제일 먼저 알아채는 편","누가 겉돌고 있는지 네 눈엔 다 보여. 그 따뜻한 눈이 친구를 지켜 줘."],
+      ["이야기를 끝까지 잘 들어 주는 편","네 옆에 있으면 마음이 편해져서, 친구들이 너한테 속마음을 털어놓기 쉬워."],
+      ["티 안 나게 뒤에서 챙겨 주는 편","조가 흔들리지 않고 끝까지 가는 건, 뒤에서 받쳐 주는 너 덕분이야."]
+    ],
+    shine:"친구가 “고마워, 너 덕분에 괜찮아졌어”라고 할 때",
+    comfy:"분위기가 편안하고 뭘 할지 미리 알 때",
+    wish:"내 생각도 한 번 물어봐 주면",
+    intro:"나는 조용히 곁을 지키는 등대별이야. 내 생각도 한 번 물어봐 주면 좋아!",
+    tips:[
+      ["내 마음도 말로 꺼내기","맞춰 주기만 하면 친구들은 네가 진짜 뭘 원하는지 몰라. 내 마음을 말하는 것도 관계를 지키는 일이야.","“나는 이게 더 좋아.”"],
+      ["거절해도 괜찮아","싫은 걸 싫다고 말해도 좋은 친구는 떠나지 않아. 부드럽게 말하면 충분해.","“이번엔 좀 어려울 것 같아.”"],
+      ["변화에 한 발 내딛기","갑자기 바뀌는 일정이 불편할 수 있어. 친구 손잡고 한 발만 내디디면 생각보다 재밌을 거야.","“나도 한번 해 볼게.”"]
+    ],
+    cheer:"등대는 바다를 비추지만,\n등대에도 불이 켜져 있어야 해. 네 마음의 불도 꼭 챙겨.",
+    withMe:"의견을 먼저 물어봐 주고, 대답할 시간을 조금 줘. 갑자기 바뀌는 건 미리 알려 주면 진짜 고마워해."
+  },
+  C:{
+    key:"C", name:"북극성", en:"C · 신중형", hex:"#8cbcff", css:"var(--c)",
+    short:"길을 알려 주는 별",
+    tagline:"흔들리지 않고 길을 알려 주는 별",
+    blend:"꼼꼼하게 살피는 신중한 빛도 있어",
+    traits:[
+      ["친구들이 놓친 걸 조용히 짚어 주는 편","꼼꼼한 네 눈 덕분에 조가 실수 없이 갈 수 있어."],
+      ["말하기 전에 생각을 정리하는 편","말수가 적어도 한 마디에 생각이 담겨 있어서, 친구들이 귀 기울여."],
+      ["뭐든 제대로 완성하고 싶은 편","대충보다 제대로! 그 마음 덕분에 우리 조 결과물이 멋지게 나와."]
+    ],
+    shine:"계획대로 딱 맞게 완성되고, 내가 찾은 방법이 통할 때",
+    comfy:"규칙을 알고 생각할 시간이 있을 때",
+    wish:"재촉하지 않고 조금 기다려 주면",
+    intro:"나는 생각이 깊은 북극성이야. 조금만 기다려 주면 좋은 생각을 꺼낼게!",
+    tips:[
+      ["완벽보다 함께","혼자 100점보다 같이 80점이 더 오래 기억돼. 친구들의 ‘대충’도 조금은 봐주기.","“이 정도도 충분히 좋다!”"],
+      ["지적 대신 제안","틀린 걸 발견하면 “틀렸어” 대신 더 좋은 방법을 건네 줘. 같은 말인데 친구 기분이 달라져.","“이렇게 하면 더 좋을 것 같아.”"],
+      ["생각 중이어도 꺼내 보기","정리가 다 안 돼도 괜찮아. 말로 꺼내면 친구들이 같이 정리해 줘.","“아직 생각 중인데, 내 생각은…”"]
+    ],
+    cheer:"북극성은 가만히 있어도 모두의 길잡이야.\n네 생각을 조금 더 자주 보여 주면 친구들이 길을 덜 잃어.",
+    withMe:"생각할 시간을 주고, 왜 그렇게 하는지 이유를 알려 줘. 재촉하지 않으면 좋은 답을 꺼내 줄 거야."
+  }
+};
+const ORDER = ["D","I","S","C"];
+
+/* ---------------- 24문항 (각 유형 6문항, 섞인 순서) ---------------- */
+const Q = [
+  {t:"D", q:"조 활동 때 아무도 안 나서면, 내가 먼저 “이렇게 하자!” 하고 정리하는 편이야."},
+  {t:"I", q:"처음 보는 친구한테도 먼저 말 거는 게 별로 어렵지 않아."},
+  {t:"S", q:"조에서 혼자 겉도는 친구가 있으면 신경 쓰여서 옆으로 가게 돼."},
+  {t:"C", q:"활동 시작 전에 규칙이랑 순서를 정확히 알고 싶어."},
+  {t:"I", q:"조가 너무 조용하면, 장난이나 드립으로 분위기를 살리고 싶어져."},
+  {t:"C", q:"별자리 만들기 같은 활동도 대충보다는 꼼꼼하고 예쁘게 완성하고 싶어."},
+  {t:"D", q:"레크리에이션 게임에서 이기는 게 진짜 중요해. 지면 좀 분해."},
+  {t:"S", q:"친구들 의견이 갈리면, 싸우지 않게 중간에서 맞춰 주려고 해."},
+  {t:"S", q:"앞에 나서는 것보다 뒤에서 도와주는 역할이 더 편해."},
+  {t:"D", q:"오래 고민하는 것보다 일단 해 보고 고치는 게 더 나아."},
+  {t:"C", q:"말하기 전에 머릿속으로 한 번 정리하고 나서 말하는 편이야."},
+  {t:"I", q:"레크리에이션이나 장기자랑처럼 다 같이 노는 시간이 제일 기대돼."},
+  {t:"C", q:"“왜 그렇게 해야 해?”가 궁금하면, 이유를 알 때까지 생각하게 돼."},
+  {t:"S", q:"갑자기 일정이 바뀌는 것보다, 미리 알고 있는 게 마음이 편해."},
+  {t:"I", q:"내 기분이나 생각이 표정이랑 말로 바로바로 드러나는 편이야."},
+  {t:"D", q:"일이 답답하게 흘러가면, 내가 나서서 방향을 확 바꾸고 싶어져."},
+  {t:"D", q:"처음 해 보는 도전 활동도 겁보다 설렘이 먼저야."},
+  {t:"C", q:"실수하면 그 장면이 자꾸 떠올라서, 다음엔 더 잘 준비하고 싶어."},
+  {t:"S", q:"친구 이야기를 끝까지 들어 주는 거, 나 좀 잘하는 것 같아."},
+  {t:"I", q:"친구들이 “너 있어서 재밌다!” 해 주면 엄청 힘이 나."},
+  {t:"S", q:"내가 조금 손해 봐도, 우리 조 분위기가 좋으면 괜찮아."},
+  {t:"I", q:"재밌는 아이디어가 막 떠올라서 “이것도 해 보자!” 하는 편이야."},
+  {t:"C", q:"친구들이 놓친 부분이나 틀린 걸 내가 먼저 발견할 때가 많아."},
+  {t:"D", q:"내 생각이 맞다 싶으면, 친구들 앞에서도 분명하게 말하는 편이야."}
+];
+const SCALE = [
+  [1,"전혀 아니야"],
+  [2,"별로 아니야"],
+  [3,"반반이야"],
+  [4,"꽤 그래"],
+  [5,"완전 나야!"]
+];
+
+/* ---------------- 상태 ---------------- */
+let answers = new Array(Q.length).fill(null);
+let idx = 0;
+let nick = "";
+let scores = null;
+let mainKey = "D";
+let viewKey = "D";
+let pickedTrait = {D:null,I:null,S:null,C:null};
+let advanceTimer = null;
+
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+
+function starSVG(color, size, glow){
+  const s = size||18;
+  return '<svg width="'+s+'" height="'+s+'" viewBox="0 0 24 24" aria-hidden="true">'+
+    (glow?'<circle cx="12" cy="12" r="11" fill="'+color+'" opacity=".18"/>':'')+
+    '<path d="M12 2.5l2.6 6.1 6.6.6-5 4.4 1.5 6.5L12 16.7 6.3 20.1l1.5-6.5-5-4.4 6.6-.6z" fill="'+color+'"/></svg>';
+}
+
+/* ---------------- 시작 화면 ---------------- */
+$("#miniStars").innerHTML = ORDER.map(k=>{
+  const t=TYPES[k];
+  return '<div class="mini">'+starSVG(t.hex,30,true)+'<div style="min-width:0"><b style="color:'+t.hex+'">'+t.name+'</b><span>'+t.short+' · '+t.key+'</span></div></div>';
+}).join("");
+["#r1","#r2","#r3"].forEach(id=>{ $(id).outerHTML = starSVG("#ffe49a",12); });
+
+$("#startBtn").addEventListener("click", ()=>{
+  nick = ($("#nick").value||"").trim().slice(0,12);
+  answers = new Array(Q.length).fill(null);
+  idx = 0;
+  show("quiz");
+  renderQ();
+});
+
+function show(id){
+  ["intro","quiz","result"].forEach(s=>{ $("#"+s).hidden = (s!==id); });
+  const el = $("#"+id);
+  el.classList.remove("fade"); void el.offsetWidth; el.classList.add("fade");
+  window.scrollTo({top:0,behavior:"auto"});
+}
+
+/* ---------------- 질문 ---------------- */
+const dotsEl = $("#dots");
+dotsEl.innerHTML = Q.map(()=>"<i></i>").join("");
+
+function renderQ(){
+  const q = Q[idx];
+  $("#count").textContent = (idx+1)+" / "+Q.length;
+  $("#qtext").textContent = q.q;
+  [...dotsEl.children].forEach((d,i)=>{
+    d.className = answers[i]!==null ? "on" : (i===idx ? "now" : "");
+  });
+  $("#opts").innerHTML = SCALE.map(([v,l])=>{
+    const sel = answers[idx]===v;
+    const tiny = Array.from({length:v},()=>starSVG(sel?"#ffe49a":"rgba(255,228,154,.45)",11)).join("");
+    return '<button type="button" class="opt'+(sel?' sel':'')+'" role="radio" aria-checked="'+sel+'" data-v="'+v+'" id="opt'+v+'">'+
+      '<span class="n">'+v+'</span><span class="lab">'+l+'</span><span class="glow">'+tiny+'</span></button>';
+  }).join("");
+  $("#prevBtn").disabled = idx===0;
+  $("#prevBtn").style.opacity = idx===0 ? .4 : 1;
+  const card = $(".qcard"); card.classList.remove("fade"); void card.offsetWidth; card.classList.add("fade");
+}
+
+function choose(v){
+  answers[idx] = v;
+  [...$("#opts").children].forEach(b=>{
+    const on = +b.dataset.v===v;
+    b.classList.toggle("sel",on); b.setAttribute("aria-checked",on);
+  });
+  clearTimeout(advanceTimer);
+  advanceTimer = setTimeout(()=>{
+    if(idx < Q.length-1){ idx++; renderQ(); }
+    else {
+      const firstEmpty = answers.indexOf(null);
+      if(firstEmpty>=0){ idx=firstEmpty; renderQ(); }
+      else finish();
+    }
+  }, 260);
+}
+
+$("#opts").addEventListener("click", e=>{
+  const b = e.target.closest(".opt"); if(!b) return;
+  choose(+b.dataset.v);
+});
+$("#prevBtn").addEventListener("click", ()=>{
+  clearTimeout(advanceTimer);
+  if(idx>0){ idx--; renderQ(); }
+});
+document.addEventListener("keydown", e=>{
+  if($("#quiz").hidden) return;
+  if(e.target && e.target.tagName==="INPUT") return;
+  const n = parseInt(e.key,10);
+  if(n>=1 && n<=5){ e.preventDefault(); choose(n); }
+  if(e.key==="Backspace" || e.key==="ArrowLeft"){ if(idx>0){ clearTimeout(advanceTimer); idx--; renderQ(); } }
+});
+
+/* ---------------- 채점 ---------------- */
+function score(ans){
+  const s = {D:0,I:0,S:0,C:0};
+  Q.forEach((q,i)=>{ s[q.t] += (ans[i]||0); });
+  return s;
+}
+function ranked(s){
+  return ORDER.slice().sort((a,b)=> s[b]-s[a] || ORDER.indexOf(a)-ORDER.indexOf(b));
+}
+
+function finish(){
+  scores = score(answers);
+  const r = ranked(scores);
+  mainKey = r[0]; viewKey = r[0];
+  pickedTrait = {D:null,I:null,S:null,C:null};
+  show("result");
+  renderResult();
+}
+
+/* ---------------- 결과 ---------------- */
+function renderResult(){
+  const r = ranked(scores);
+  const top = scores[r[0]];
+  const tied = r.filter(k=>scores[k]===top);
+  const second = r.find(k=>k!==mainKey && !tied.includes(k)) || r[1];
+  const T = TYPES[viewKey];
+  const M = TYPES[mainKey];
+  const who = nick ? esc(nick)+"의 별은" : "너의 별은";
+  const isMain = viewKey===mainKey;
+
+  let twinNote = "";
+  if(tied.length>1){
+    twinNote = '<p class="twin">'+tied.map(k=>'<b style="color:'+TYPES[k].hex+'">'+TYPES[k].name+'</b>').join("과 ")+
+      '의 빛이 똑같이 세! 너는 여러 빛이 함께 빛나는 <b>쌍둥이별</b>이야. 아래에서 두 별을 다 읽어 보고, 더 나 같은 쪽을 골라도 돼.</p>';
+  } else {
+    twinNote = '<p class="twin">두 번째로 밝은 빛은 <b style="color:'+TYPES[second].hex+'">'+TYPES[second].name+'</b>. 그래서 너에겐 '+TYPES[second].blend+'.</p>';
+  }
+
+  const bars = ORDER.map(k=>{
+    const t=TYPES[k], v=scores[k], pct=Math.round((v-6)/24*100);
+    return '<div class="bar"><span style="color:'+t.hex+'">'+t.name+'</span><span class="track"><span class="fill" style="width:'+Math.max(4,pct)+'%;background:'+t.hex+'"></span></span><span class="v">'+v+'</span></div>';
+  }).join("");
+
+  const tabs = ORDER.map(k=>{
+    const t=TYPES[k];
+    return '<button type="button" class="tab" role="tab" id="tab'+k+'" aria-selected="'+(k===viewKey)+'" data-k="'+k+'" style="--tc:'+t.hex+'">'+
+      starSVG(t.hex,16)+'<b>'+t.name+'</b><small>'+(k===mainKey?'나의 별':(tied.includes(k)?'쌍둥이별':''))+'</small></button>';
+  }).join("");
+
+  const traitPick = pickedTrait[viewKey];
+  const traits = T.traits.map((tr,i)=>{
+    const sel = traitPick===i;
+    return '<button type="button" class="trait'+(sel?' sel':'')+'" data-i="'+i+'" id="trait'+i+'" aria-pressed="'+sel+'">'+
+      '<span><b style="font-family:var(--f-display);font-weight:400;font-size:17px;display:block">'+tr[0]+'</b>'+
+      '<span style="font-size:14.5px;color:var(--ink-dim)">'+tr[1]+'</span></span>'+
+      '<span class="pick">'+(sel?'나랑 비슷해':'나도?')+'</span></button>';
+  }).join("");
+
+  const tips = T.tips.map((tp,i)=>
+    '<li><span class="num">'+(i+1)+'</span><div><b>'+tp[0]+'</b><p>'+tp[1]+'</p><span class="try">'+tp[2]+'</span></div></li>'
+  ).join("");
+
+  const others = ORDER.filter(k=>k!==viewKey).map(k=>{
+    const t=TYPES[k];
+    return '<div class="other">'+starSVG(t.hex,22,true)+'<div><b style="color:'+t.hex+'">'+t.name+' 친구랑 지낼 땐</b><p>'+t.withMe+'</p></div></div>';
+  }).join("");
+
+  const sheetText = buildSheet(T);
+
+  $("#result").innerHTML =
+  '<div class="res-hero">'+
+    '<span class="who">'+(isMain? who : "구경 중인 별")+'</span>'+
+    '<h2 style="color:'+T.hex+'">'+T.name+'</h2>'+
+    '<span class="en">'+T.en+'</span>'+
+    '<p class="tag">'+T.tagline+'</p>'+
+  '</div>'+
+  (isMain? twinNote : '<p class="twin">너의 별은 <b style="color:'+M.hex+'">'+M.name+'</b>이야. 지금은 다른 별을 구경하는 중!</p>')+
+
+  '<div class="panel sky-card">'+
+    '<div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px"><h3 style="font-size:19px">내 마음 별자리</h3><span class="private">나만 보는 빛의 세기 (6~30)</span></div>'+
+    '<canvas id="constel" role="img" aria-label="네 가지 별의 빛 세기: '+ORDER.map(k=>TYPES[k].name+' '+scores[k]+'점').join(', ')+'"></canvas>'+
+    '<div class="bars">'+bars+'</div>'+
+    '<p class="private">누구나 네 가지 빛을 다 갖고 있어. 가장 밝은 빛이 지금의 나와 제일 닮았을 뿐이야.</p>'+
+  '</div>'+
+
+  '<div class="tabs" role="tablist" aria-label="별 유형 보기">'+tabs+'</div>'+
+
+  '<div class="panel sec" style="--tc:'+T.hex+'">'+
+    '<h3>'+starSVG(T.hex,20)+(isMain?'친구들이 아는 너의 모습':T.name+'은 이런 친구야')+'</h3>'+
+    '<p class="sub">이 중에 “이거 진짜 나다!” 싶은 걸 하나 눌러 봐. 활동지에 적을 거야.</p>'+
+    '<div class="traits" id="traits">'+traits+'</div>'+
+  '</div>'+
+
+  '<div class="panel sec" style="--tc:'+T.hex+'">'+
+    '<h3>'+starSVG(T.hex,20)+'내가 반짝이는 순간</h3>'+
+    '<p class="shine">'+T.shine+'</p>'+
+    '<div class="two">'+
+      '<div class="say"><span class="k">나는 이럴 때 편해</span><span class="hand">'+T.comfy+'</span></div>'+
+      '<div class="say"><span class="k">친구들이 이렇게 해 주면 좋아</span><span class="hand">'+T.wish+'</span></div>'+
+    '</div>'+
+  '</div>'+
+
+  '<div class="panel sec" style="--tc:'+T.hex+'">'+
+    '<h3>'+starSVG(T.hex,20)+'관계 레벨업 꿀팁</h3>'+
+    '<p class="sub">네 빛은 그대로 지키면서, 친구들이랑 더 잘 이어지는 방법이야.</p>'+
+    '<ul class="tips">'+tips+'</ul>'+
+    '<p class="cheer" style="color:'+T.hex+'">'+esc(T.cheer).replace(/\n/g,"<br>")+'</p>'+
+  '</div>'+
+
+  '<div class="panel sec">'+
+    '<h3>'+starSVG("#ffe49a",20)+'다른 별 친구랑 지낼 때</h3>'+
+    '<p class="sub">힌트일 뿐이야. 친구 마음은 유형보다 직접 물어보는 게 제일 정확해.</p>'+
+    '<div class="others">'+others+'</div>'+
+  '</div>'+
+
+  '<div class="panel sec sheet">'+
+    '<h3>'+starSVG("#ffe49a",20)+'활동지에 옮겨 적기</h3>'+
+    '<p class="sub">개인 활동지랑 별 모양 종이에 이대로 적으면 돼. 위에서 특징을 하나 고르면 같이 바뀌어.</p>'+
+    '<pre id="sheetText">'+esc(sheetText)+'</pre>'+
+    '<button type="button" class="btn" id="copyBtn">복사하기</button>'+
+    '<p class="copied" id="copied" aria-live="polite"></p>'+
+  '</div>'+
+
+  '<p class="promise"><b>우리 조의 약속</b><br>서로의 이야기 끊지 않기 · 말하기 싫으면 패스해도 괜찮기<br>DISC 유형으로 친구 단정하지 않기 · 남의 마음 허락 없이 발표하지 않기</p>'+
+
+  '<button type="button" class="btn ghost" id="retryBtn">처음부터 다시 하기</button>';
+
+  drawConstellation();
+
+  $("#result").querySelectorAll(".tab").forEach(b=>b.addEventListener("click",()=>{
+    viewKey = b.dataset.k; renderResult();
+    const tb = document.getElementById("tab"+viewKey); if(tb) tb.focus({preventScroll:true});
+  }));
+  $("#traits").addEventListener("click", e=>{
+    const b = e.target.closest(".trait"); if(!b) return;
+    const i = +b.dataset.i;
+    pickedTrait[viewKey] = (pickedTrait[viewKey]===i) ? null : i;
+    $("#traits").querySelectorAll(".trait").forEach((el,j)=>{
+      const on = pickedTrait[viewKey]===j;
+      el.classList.toggle("sel",on); el.setAttribute("aria-pressed",on);
+      el.querySelector(".pick").textContent = on ? "나랑 비슷해" : "나도?";
+    });
+    $("#sheetText").textContent = buildSheet(TYPES[viewKey]);
+  });
+  $("#copyBtn").addEventListener("click", ()=>{
+    const txt = $("#sheetText").textContent;
+    const ok = ()=>{ $("#copied").textContent = "복사했어! 메모장이나 카톡 나에게 보내기에 붙여 넣어 봐."; };
+    const fallback = ()=>{
+      const range = document.createRange(); range.selectNodeContents($("#sheetText"));
+      const sel = window.getSelection(); sel.removeAllRanges(); sel.addRange(range);
+      $("#copied").textContent = "글자를 선택해 놨어. 길게 눌러서 복사해 줘.";
+    };
+    try{
+      if(navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(txt).then(ok, fallback);
+      } else fallback();
+    }catch(_){ fallback(); }
+  });
+  $("#retryBtn").addEventListener("click", ()=>{
+    answers = new Array(Q.length).fill(null); idx=0; scores=null;
+    show("intro");
+  });
+}
+
+function buildSheet(T){
+  const i = pickedTrait[T.key];
+  const trait = i===null ? "(위에서 하나 골라 봐)" : T.traits[i][0];
+  const name = nick ? nick+"의 별" : "나의 별";
+  return "["+name+"] "+T.name+" ("+T.en+")\n"+
+         "나와 비슷한 특징: "+trait+"\n"+
+         "내가 반짝이는 순간: "+T.shine+"\n"+
+         "친구에게 건네는 말: “나는 "+T.comfy+" 편해. 친구들이 "+T.wish+" 좋아.”\n"+
+         "내 별 소개 예시: “"+T.intro+"”";
+}
+
+function drawConstellation(){
+  const cv = $("#constel"); if(!cv || !scores) return;
+  const dpr = Math.min(window.devicePixelRatio||1, 2);
+  const w = cv.clientWidth, h = cv.clientHeight;
+  cv.width = Math.round(w*dpr); cv.height = Math.round(h*dpr);
+  const g = cv.getContext("2d"); g.setTransform(dpr,0,0,dpr,0,0);
+  g.clearRect(0,0,w,h);
+  const pos = {D:[.22,.36], I:[.74,.3], S:[.8,.64], C:[.28,.7]};
+  const pts = ORDER.map(k=>({k, x:pos[k][0]*w, y:pos[k][1]*h, r:5 + (scores[k]-6)/24*16}));
+  g.strokeStyle = "rgba(255,228,154,.35)"; g.lineWidth = 1.2; g.setLineDash([3,5]);
+  g.beginPath();
+  pts.forEach((p,i)=>{ i?g.lineTo(p.x,p.y):g.moveTo(p.x,p.y); });
+  g.closePath(); g.stroke(); g.setLineDash([]);
+  pts.forEach(p=>{
+    const t = TYPES[p.k];
+    const grd = g.createRadialGradient(p.x,p.y,0,p.x,p.y,p.r*2.6);
+    grd.addColorStop(0, t.hex); grd.addColorStop(.35, t.hex+"88"); grd.addColorStop(1, t.hex+"00");
+    g.fillStyle = grd; g.beginPath(); g.arc(p.x,p.y,p.r*2.6,0,Math.PI*2); g.fill();
+    g.fillStyle = "#ffffff"; g.beginPath(); g.arc(p.x,p.y,Math.max(2,p.r*.35),0,Math.PI*2); g.fill();
+    if(p.k===mainKey){
+      g.strokeStyle = t.hex; g.lineWidth = 1.5;
+      g.beginPath(); g.arc(p.x,p.y,p.r*1.9+6,0,Math.PI*2); g.stroke();
+    }
+    g.font = '15px "Jua", "Gowun Dodum", sans-serif';
+    g.textAlign = "center"; g.fillStyle = t.hex;
+    const ly = p.y < h/2 ? p.y - p.r*2.6 - 6 : p.y + p.r*2.6 + 16;
+    g.fillText(t.name+" "+scores[p.k], p.x, Math.min(h-6, Math.max(16, ly)));
+  });
+}
+window.addEventListener("resize", ()=>{ if(!$("#result").hidden) drawConstellation(); sizeSky(); });
+
+/* ---------------- 밤하늘 배경 ---------------- */
+const sky = $("#sky"), sg = sky.getContext("2d");
+let stars = [];
+const reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+function sizeSky(){
+  const dpr = Math.min(window.devicePixelRatio||1, 2);
+  sky.width = Math.round(innerWidth*dpr); sky.height = Math.round(innerHeight*dpr);
+  sg.setTransform(dpr,0,0,dpr,0,0);
+  const n = Math.round(innerWidth*innerHeight/5200);
+  stars = Array.from({length:n},()=>({
+    x:Math.random()*innerWidth, y:Math.random()*innerHeight*.78,
+    r:Math.random()*1.3+.3, p:Math.random()*Math.PI*2, s:.6+Math.random()*1.4
+  }));
+  if(reduce) paintSky(0);
+}
+function paintSky(t){
+  sg.clearRect(0,0,innerWidth,innerHeight);
+  stars.forEach(st=>{
+    const a = reduce ? .7 : .35 + .65*Math.abs(Math.sin(st.p + t*.0006*st.s));
+    sg.globalAlpha = a; sg.fillStyle = "#fff4d6";
+    sg.beginPath(); sg.arc(st.x,st.y,st.r,0,Math.PI*2); sg.fill();
+  });
+  sg.globalAlpha = 1;
+  // 수평선 위 잔물결
+  const base = innerHeight*.86;
+  for(let i=0;i<3;i++){
+    sg.strokeStyle = "rgba(140,188,255,"+(.10-i*.025)+")"; sg.lineWidth = 1;
+    sg.beginPath();
+    for(let x=0;x<=innerWidth;x+=8){
+      const y = base + i*26 + Math.sin(x*.018 + (reduce?0:t*.0008) + i)*4;
+      x?sg.lineTo(x,y):sg.moveTo(x,y);
+    }
+    sg.stroke();
+  }
+}
+function loop(t){ paintSky(t); requestAnimationFrame(loop); }
+sizeSky();
+if(!reduce) requestAnimationFrame(loop);
+if(document.fonts && document.fonts.ready){ document.fonts.ready.then(()=>{ if(!$("#result").hidden) drawConstellation(); }); }
+
+})();
+</script>
+
+</body>
+</html>
